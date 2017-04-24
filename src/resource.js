@@ -8,6 +8,7 @@ Vue.use(VueResource);
 Vue.http.options = {
   root: API_BASE
 };
+
 Vue.http.interceptors.push((request, next) => {
   var timeout;
   // 這裡改用 _timeout ，就不會觸發原本的
@@ -22,25 +23,40 @@ Vue.http.interceptors.push((request, next) => {
   }
   next((response) => {
     clearTimeout(timeout);
-    console.log(response.status)//如果超时输出408
+    // console.log(response.status) //如果超时输出408
     return response;
   })
 })
+
+Vue.http.interceptors.push((request, next) => {
+  if (localStorage.token) {
+    request.headers.set('x-access-token', localStorage.token)
+    next(response => {
+      console.log(response.status)
+      return response
+    })
+  }
+})
+
 const actions = {
-//   updatepsw: {
-//     method: 'PUT',
-//     url: 'User/UpdatePass?LoginId={LoginId}&key={key}&oldPassword={oldPassword}&newPassword={newPassword}'
-//   },
-//   alarmdata: {  //获取全部警报
-//     method: 'GET',
-//     url: 'Alarm/GetAllAlarm',
-//     _timeout: 10000
-//   },
+  //   updatepsw: {
+  //     method: 'PUT',
+  //     url: 'User/UpdatePass?LoginId={LoginId}&key={key}&oldPassword={oldPassword}&newPassword={newPassword}'
+  //   },
+  //   alarmdata: {  //获取全部警报
+  //     method: 'GET',
+  //     url: 'Alarm/GetAllAlarm',
+  //     _timeout: 10000
+  //   },
   //loginId passWord
-    login: {
-        method: 'GET',
-        url: 'User/Login?'
-    }
+  login: {
+    method: 'GET',
+    url: 'User/Login?'
+  },
+  getIndexBook: {
+    method: 'GET',
+    url: 'Books/getIndexBook'
+  }
 }
 const resource = Vue.resource('', {}, actions)
 

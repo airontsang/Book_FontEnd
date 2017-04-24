@@ -25,6 +25,8 @@
 
 <script>
 import { Masker } from 'vux'
+import { set_book_info, get_book_info} from '../../state.js'
+
 export default {
   components: {
     Masker
@@ -36,6 +38,9 @@ export default {
         img: 'https://cdn.xiaotaojiang.com/uploads/82/1572ec37969ee263735262dc017975/_.jpg'
       }]
     }
+  },
+  mounted: function () {
+    this.list[0].title = get_book_info();
   }
 }
 </script>

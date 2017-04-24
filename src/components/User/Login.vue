@@ -44,8 +44,7 @@
                 passWord: this.passWord
             }).then( res => {
                 if( res.status === 200 && res.body.error_code === 0) {
-                    localStorage.token = res.body.token;
-                    
+                    localStorage.token = res.body.token;  
                 }
             }, err => {
                 console.log(err)

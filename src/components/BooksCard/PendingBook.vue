@@ -1,6 +1,6 @@
 <template>
   <div>
-    <divider>simple card with header and content</divider>
+    <divider>This is what I want</divider>
 	   <card :header="{title:'我的钱包'}">
       <div slot="content" class="card-demo-flex card-demo-content01">
         <div class="vux-1px-l vux-1px-r">
@@ -29,7 +29,7 @@
     <br>
     <divider>with footer</divider>
      <card :header="{title:'商品详情'}" :footer="{title:'查看更多',link:'/component/panel'}">
-      <p slot="content" class="card-padding">custom content</p>
+      <p slot="content" class="card-padding">{{ title }}</p>
     </card>
 
     <br>
@@ -46,7 +46,23 @@
 
 <script>
 import { Divider, Card } from 'vux'
+import { set_book_info, get_book_info} from '../../state.js'
 export default {
+  data () {
+    return {
+      title: ''
+    }
+  },
+  computed: {
+    title : function () {
+      var test = get_book_info()
+      return test
+    }
+  },
+  mounted: function () {
+    set_book_info("这是什么")
+    this.title = get_book_info()
+  },
   components: {
     Card,
     Divider

@@ -4,11 +4,11 @@ import Vue from 'vue'
 import VueResource from 'vue-resource'
 import FastClick from 'fastclick'
 import App from './App'
+
 import router from './router/index'
 
-FastClick.attach(document.body)
+FastClick.attach(document.body);
 Vue.use(VueResource);
-Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
