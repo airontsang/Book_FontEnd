@@ -14,16 +14,16 @@ var router = new Router({
     path: '/',
     name: 'BooksHolder',
     component: BooksHolder,
-    beforeEnter: ((to, from, next) => {
-      console.log(localStorage.token);
-      if (localStorage.token) {
-        next();
-      } else {
-        next({
-          path: '/login'
-        })
-      }
-    }),
+    // beforeEnter: ((to, from, next) => {
+    //   console.log(localStorage.token);
+    //   if (localStorage.token) {
+    //     next();
+    //   } else {
+    //     next({
+    //       path: '/login'
+    //     })
+    //   }
+    // }),
     children: [{
       path: '',
       component: NoneUser
