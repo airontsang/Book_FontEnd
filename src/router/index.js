@@ -5,6 +5,9 @@ import PendingBook from '@/components/BooksCard/PendingBook'
 import PublicedBooks from '@/components/BooksCard/PublicedBooks'
 import AllBooks from '@/components/BooksCard/AllBooks'
 import NoneUser from '@/components/BooksCard/NoneUser'
+import AllBookItems from '@/components/BookItems/AllBookItems'
+import EditBookItem from '@/components/BookItems/EditBookItem'
+import PublicedDetail from '@/components/BooksCard/PublicedDetail'
 import Login from '@/components/User/Login.vue'
 
 Vue.use(Router)
@@ -40,6 +43,15 @@ var router = new Router({
   }, {
     path: '/login',
     component: Login
+  }, {
+    path: '/allbookitems',
+    component: AllBookItems
+  }, {
+    path: '/editbookitem',
+    component: EditBookItem
+  }, {
+    path: '/publicedbookdetails',
+    component: PublicedDetail
   }]
 })
 
