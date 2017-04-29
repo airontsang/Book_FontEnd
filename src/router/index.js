@@ -16,22 +16,23 @@ var router = new Router({
   routes: [{
     path: '/',
     name: 'BooksHolder',
+    redirect: { path: 'pending' },
     component: BooksHolder,
-    // beforeEnter: ((to, from, next) => {
-    //   console.log(localStorage.token);
-    //   if (localStorage.token) {
-    //     next();
-    //   } else {
-    //     next({
-    //       path: '/login'
-    //     })
-    //   }
-    // }),
+    beforeEnter: ((to, from, next) => {
+      console.log(localStorage.token);
+      if (localStorage.token) {
+        next();
+      } else {
+        next({
+          path: '/login'
+        })
+      }
+    }),
     children: [{
-      path: '',
+      path: 'none',
       component: NoneUser
     }, {
-      path: 'pending/:bookId',
+      path: 'pending',
       component: PendingBook
     }, {
       path: 'publiced',

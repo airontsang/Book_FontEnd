@@ -39,12 +39,17 @@
     },
     methods: {
         login: function () {
+           this.$vux.loading.show({
+             text: "登录中"
+           })
             resource.login({
                 loginId: this.LoginId,
                 passWord: this.passWord
             }).then( res => {
                 if( res.status === 200 && res.body.error_code === 0) {
-                    localStorage.token = res.body.token;  
+                    localStorage.token = res.body.token;
+                    this.$router.push({ path: '/' })  
+                    this.$vux.loading.hide()
                 }
             }, err => {
                 console.log(err)

@@ -1,5 +1,8 @@
 var book_info = {
+    id: '',
     title: '',
+    intro: '',
+    partyTime: '',
 }
 
 var book_item = [

@@ -68,12 +68,38 @@
 </template>
 
 <script>
+  import resource from '@/resource.js'
   import { Group, XButton, Cell, CellBox } from 'vux'
   import { set_book_info, get_book_info } from '../../state.js'
   export default {
     data() {
       return {
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      resource.getIndexBook().then(res => {
+        if (res.status === 200 && res.body.error_code === 0) {
+          console.log(res.body.data)
+          next( vm => {
+            vm.$router.push({ path: 'pending', query: { bookId: '5'} })
+            vm.$vux.loading.hide()
+          })
+        } else if (res.status === 200 && res.body.error_code === 1006){
+          next( vm => {
+            vm.$vux.loading.hide()
+          vm.$router.push({ path: 'login' })
+          vm.$vux.toast.show({
+            text: '登录过期',
+            type: 'warn',
+            time: 2000
+          })
+          })
+        }
+      }, err => {
+          next(vm => {
+            vm.$vux.loading.hide()
+          })
+      })
     },
     computed: {
       title: function () {
@@ -84,6 +110,9 @@
     mounted: function () {
       set_book_info("这是什么")
       this.title = get_book_info()
+      this.$vux.loading.show({
+        text: '首页加载中'
+      })
     },
     components: {
       Group,

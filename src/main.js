@@ -10,6 +10,9 @@ import router from './router/index'
 FastClick.attach(document.body);
 Vue.use(VueResource);
 
+import { LoadingPlugin, ToastPlugin } from 'vux'
+Vue.use(LoadingPlugin)
+Vue.use(ToastPlugin)
 /* eslint-disable no-new */
 new Vue({
   router,

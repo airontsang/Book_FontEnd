@@ -36,8 +36,8 @@
     },
     data() {
         return {
-            index0: false,
-            index1: true,
+            index0: true,
+            index1: false,
             index2: false            
         }
     }
