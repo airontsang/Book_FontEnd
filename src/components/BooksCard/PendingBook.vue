@@ -14,7 +14,7 @@
       <div class="info-place">{{ book.place }}</div>
     </div>
     <div class="info-intro">
-        {{ book.intro }}
+      {{ book.intro }}
     </div>
     <div class="but-item">
       <x-button @click.native="add_item" type="primary" action-type="button">记一笔</x-button>
@@ -58,32 +58,41 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-    resource.getIndexBook().then(res => {
-      if (res.status === 200 && res.body.error_code === 0) {
-        console.log(res.body.data)
-        index_book.set(res.body.data.info, res.body.data.bookItems);
-        console.log(index_book);
-        next(vm => {
-          // vm.$router.push({ path: 'pending', query: { bookId: '5'} })
-          vm.book = index_book;
-          vm.$vux.loading.hide()
-        })
-      } else if (res.status === 200 && res.body.error_code === 1006) {
-        next(vm => {
-          vm.$vux.loading.hide()
-          vm.$router.push({ path: 'login' })
-          vm.$vux.toast.show({
-            text: '登录过期',
-            type: 'warn',
-            time: 2000
+    if (!index_book.id) {
+      resource.getIndexBook().then(res => {
+        if (res.status === 200 && res.body.error_code === 0) {
+          console.log(res.body.data)
+          index_book.set(res.body.data.info, res.body.data.bookItems);
+          console.log(index_book);
+          next(vm => {
+            // vm.$router.push({ path: 'pending', query: { bookId: '5'} })
+            vm.book = index_book;
+            vm.$vux.loading.hide()
           })
+        } else if (res.status === 200 && res.body.error_code === 1006) {
+          next(vm => {
+            vm.$vux.loading.hide()
+            vm.$router.push({ path: 'login' })
+            vm.$vux.toast.show({
+              text: '登录过期',
+              type: 'warn',
+              time: 2000
+            })
+          })
+        }
+      }, err => {
+        next(vm => {
+          vm.$vux.loading.hide()
         })
-      }
-    }, err => {
-      next(vm => {
-        vm.$vux.loading.hide()
       })
-    })
+    } else {
+      console.log("不为空")
+      next(vm => {
+          vm.$vux.loading.hide()
+          vm.book = index_book;
+        })
+    }
+
   },
   methods: {
     add_item: function () {

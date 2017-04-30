@@ -10,6 +10,11 @@ import router from './router/index'
 FastClick.attach(document.body);
 Vue.use(VueResource);
 
+Vue.http.options.emulateJSON = true;
+Vue.http.options.headers = {
+  'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+};
+
 import { LoadingPlugin, ToastPlugin } from 'vux'
 Vue.use(LoadingPlugin)
 Vue.use(ToastPlugin)

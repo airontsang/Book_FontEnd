@@ -65,7 +65,7 @@ const actions = {
   },
   addBookItem: {
     method  : 'POST',
-    url     : 'BookItem/addBookItem?bookId={bookId}&content={content}&charge={charge}&type={type}&tag={tag}'
+    url     : 'BookItem/addBookItem'
   },
   editBookItem: {
     method  : 'PUT',

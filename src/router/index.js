@@ -10,6 +10,7 @@ import EditBookItem from '@/components/BookItems/EditBookItem'
 import PublicedDetail from '@/components/BooksCard/PublicedDetail'
 import Login from '@/components/User/Login.vue'
 
+import { index_book } from '../state'
 Vue.use(Router)
 
 var router = new Router({
@@ -59,7 +60,8 @@ var router = new Router({
   }, {
     path: '/editbookitem',
     name: 'editbookitem',
-    component: EditBookItem
+    component: EditBookItem,
+    meta: { requireBook: true }
   }, {
     path: '/publicedbookdetails',
     name: 'publicedbookdetails',
@@ -67,4 +69,18 @@ var router = new Router({
   }]
 })
 
+router.beforeEach( (to, from, next) => {
+  if(to.matched.some( record => record.meta.requireBook)) {
+    //去的那个路由确实需要验证该值
+    if(!index_book.id) {
+      next({
+        path: '/pending',
+      })
+    } else {
+      next()  //有值，可以跳
+    }
+  } else {
+    next()   //不需要验证，可以跳
+  }
+})
 export default router

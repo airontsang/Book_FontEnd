@@ -27,7 +27,7 @@ export default {
     },
     data() {
         return {
-            tag: 1
+            tag: 0
         }
     },
     methods: {
@@ -36,11 +36,12 @@ export default {
         },
         submit: function () {
             this.$emit('submit')
-        }
+        },
     },
-    computed: {
-
-
+    watch: {
+        tag: function () {
+            this.$emit('typeChanged', this.tag);
+        }
     },
     mounted: function () {
     },

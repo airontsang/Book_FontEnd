@@ -26,7 +26,7 @@ index_book.set = function (info, bookItems) {
     this.isPlublic  = info.isPublic;
 
     bookItems.map( item => {     
-        item.update_at = moment(item.update_at).format('MM-DD HH:mm');
+        item.happen_at = moment(item.happen_at).format('MM-DD HH:mm');
         return item;
     }) 
     this.book_item  = bookItems;
@@ -44,6 +44,13 @@ index_book.reset = function () {
     this.balance    = 0;
     this.isPlublic  = false;
     this.book_item  = [];
+}
+
+index_book.newItem = function (newItem) {
+    if( this.book_item.length >= 4){
+        this.book_item.splice(3, 1);
+    }
+    this.book_item.unshift(newItem);
 }
 
 export { index_book }
