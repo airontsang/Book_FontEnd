@@ -25,7 +25,6 @@
 
 <script>
 import { Masker } from 'vux'
-import { set_book_info, get_book_info} from '../../state.js'
 
 export default {
   components: {
@@ -40,7 +39,6 @@ export default {
     }
   },
   mounted: function () {
-    this.list[0].title = get_book_info();
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header-box">
-      <h1 class="header-title">06届下李朗小学聚会</h1>
+      <h1 class="header-title">{{ book.title }}</h1>
       <div class="header-edit">
         <x-icon type="ios-plus" size="37"></x-icon>
       </div>
@@ -10,14 +10,14 @@
       </div>
     </div>
     <div class="info-box">
-      <div class="info-time">2017-5-25</div>
-      <div class="info-place">深圳南山</div>
+      <div class="info-time">{{ book.partyTime }}</div>
+      <div class="info-place">{{ book.place }}</div>
     </div>
     <div class="info-intro">
-      最近我开始使用Vs code来编写前端代码，为了编写方便我安装了HTML Snippets这个自动补全插件，但是我使用的时候发现一个问题就是，自动补全插件的提示优先级最低，比如我输入div的时候想回车直接就补
+        {{ book.intro }}
     </div>
     <div class="but-item">
-      <x-button type="primary" action-type="button">记一笔</x-button>
+      <x-button @click.native="add_item" type="primary" action-type="button">记一笔</x-button>
     </div>
     <div class="item-box">
       <ul>
@@ -32,35 +32,15 @@
             <label class="arrow"></label>
           </div>
         </li>
-        <li class="item-cell vux-1px-b">
+        <li class="item-cell vux-1px-b" v-for="item in book.book_item">
           <div class="item-left">
-            <div class="item-tag">酒店住宿</div>
+            <div class="item-tag">{{ item.tag }}</div>
             <div class="two-info">
-              <span class="item-time">04-27</span>
-              <span class="item-content">他又超支了</span>
+              <span class="item-time">{{ item.update_at }}</span>
+              <span class="item-content">{{ item.content }}</span>
             </div>
           </div>
-          <div class="item-right">￥425.00</div>
-        </li>
-        <li class="item-cell vux-1px-b">
-          <div class="item-left">
-            <div class="item-tag">吃喝</div>
-            <div class="two-info">
-              <span class="item-time">04-28</span>
-              <span class="item-content"></span>
-            </div>
-          </div>
-          <div class="item-right">￥386.00</div>
-        </li>
-        <li class="item-cell vux-1px-b">
-          <div class="item-left">
-            <div class="item-tag">交款</div>
-            <div class="two-info">
-              <span class="item-time">04-20</span>
-              <span class="item-content">胖子</span>
-            </div>
-          </div>
-          <div class="item-right">￥550.00</div>
+          <div class="item-right">￥{{ item.charge }}</div>
         </li>
       </ul>
     </div>
@@ -68,164 +48,169 @@
 </template>
 
 <script>
-  import resource from '@/resource.js'
-  import { Group, XButton, Cell, CellBox } from 'vux'
-  import { set_book_info, get_book_info } from '../../state.js'
-  export default {
-    data() {
-      return {
-      }
-    },
-    beforeRouteEnter (to, from, next) {
-      resource.getIndexBook().then(res => {
-        if (res.status === 200 && res.body.error_code === 0) {
-          console.log(res.body.data)
-          next( vm => {
-            vm.$router.push({ path: 'pending', query: { bookId: '5'} })
-            vm.$vux.loading.hide()
-          })
-        } else if (res.status === 200 && res.body.error_code === 1006){
-          next( vm => {
-            vm.$vux.loading.hide()
+import resource from '@/resource.js'
+import { Group, XButton, Cell, CellBox } from 'vux'
+import { index_book } from '../../state.js'
+export default {
+  data() {
+    return {
+      book: {},
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    resource.getIndexBook().then(res => {
+      if (res.status === 200 && res.body.error_code === 0) {
+        console.log(res.body.data)
+        index_book.set(res.body.data.info, res.body.data.bookItems);
+        console.log(index_book);
+        next(vm => {
+          // vm.$router.push({ path: 'pending', query: { bookId: '5'} })
+          vm.book = index_book;
+          vm.$vux.loading.hide()
+        })
+      } else if (res.status === 200 && res.body.error_code === 1006) {
+        next(vm => {
+          vm.$vux.loading.hide()
           vm.$router.push({ path: 'login' })
           vm.$vux.toast.show({
             text: '登录过期',
             type: 'warn',
             time: 2000
           })
-          })
-        }
-      }, err => {
-          next(vm => {
-            vm.$vux.loading.hide()
-          })
-      })
-    },
-    computed: {
-      title: function () {
-        var test = get_book_info()
-        return test
+        })
       }
-    },
-    mounted: function () {
-      set_book_info("这是什么")
-      this.title = get_book_info()
-      this.$vux.loading.show({
-        text: '首页加载中'
+    }, err => {
+      next(vm => {
+        vm.$vux.loading.hide()
       })
-    },
-    components: {
-      Group,
-      Cell,
-      CellBox,
-      XButton
+    })
+  },
+  methods: {
+    add_item: function () {
+      this.$router.push({ path: 'editbookitem' })
     }
+  },
+  computed: {
+
+  },
+  mounted: function () {
+    this.$vux.loading.show({
+      text: '首页加载中'
+    })
+  },
+  components: {
+    Group,
+    Cell,
+    CellBox,
+    XButton
   }
+}
 
 </script>
 
 <style scoped lang="less">
-  @import '~vux/src/styles/1px.less';
-  .vux-x-icon {
-    fill: #09BB07;
-  }
-  
-  .header-box {
-    width: 100%;
-    display: flex;
-    text-align: center;
-    align-items: center;
-    padding: 10px 0;
-    h1 {
-      width: 100%;
-      font-size: 1em;
-    }
-    .header-add {
-      display: flex;
-      align-items: center;
-      position: absolute;
-      right: 1em;
-    }
-    .header-edit {
-      display: flex;
-      align-items: center;
-      position: absolute;
-      left: 1em;
-    }
-  }
-  
-  .info-cell {
-    padding: 10px;
-    text-align: center;
-  }
-  
-  .info-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .info-time {
-      .info-cell;
-      flex: 1;
-    }
-    .info-place {
-      .info-cell;
-      flex: 1;
-    }
-  }
-  
-  .info-intro {
-    font-size: .8em;
-    padding: 10px;
-  }
-  
-  .but-item {
-    padding: 10px;
-  }
-  
-  .item-cell {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .item-all {
-    .all-box {
-      width: 70%;
-    }
-    .all-text {
-      width: 25%;
-      color: #999;
-      text-align: right;
-      margin-right: 10px;
-    }
-    .arrow-box {
-      width: 5%;
-    }
-  }
-  
-  .arrow {
-    content: " ";
-    display: inline-block;
-    height: 6px;
-    width: 6px;
-    border-width: 2px 2px 0 0;
-    border-color: #C8C8CD;
-    border-style: solid;
-    -webkit-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-    transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-  }
+@import '~vux/src/styles/1px.less';
+.vux-x-icon {
+  fill: #09BB07;
+}
 
-  .item-left {
+.header-box {
+  width: 100%;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  padding: 10px 0;
+  h1 {
+    width: 100%;
+    font-size: 1em;
+  }
+  .header-add {
     display: flex;
-    flex-direction: column;
-    width: 80%;
-    .two-info {
-      font-size: .6em;
-      color: #999;
-    }
+    align-items: center;
+    position: absolute;
+    right: 1em;
   }
-  .item-right {
-    width: 20%;
+  .header-edit {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 1em;
+  }
+}
+
+.info-cell {
+  padding: 10px;
+  text-align: center;
+}
+
+.info-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .info-time {
+    .info-cell;
+    flex: 1;
+  }
+  .info-place {
+    .info-cell;
+    flex: 1;
+  }
+}
+
+.info-intro {
+  font-size: .8em;
+  padding: 10px;
+}
+
+.but-item {
+  padding: 10px;
+}
+
+.item-cell {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.item-all {
+  .all-box {
+    width: 70%;
+  }
+  .all-text {
+    width: 25%;
+    color: #999;
     text-align: right;
+    margin-right: 10px;
   }
+  .arrow-box {
+    width: 5%;
+  }
+}
+
+.arrow {
+  content: " ";
+  display: inline-block;
+  height: 6px;
+  width: 6px;
+  border-width: 2px 2px 0 0;
+  border-color: #C8C8CD;
+  border-style: solid;
+  -webkit-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+  transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+}
+
+.item-left {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  .two-info {
+    font-size: .6em;
+    color: #999;
+  }
+}
+
+.item-right {
+  width: 20%;
+  text-align: right;
+}
 </style>

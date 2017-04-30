@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import BooksHolder from '@/components/BooksCard/BooksHolder'
 import PendingBook from '@/components/BooksCard/PendingBook'
 import PublicedBooks from '@/components/BooksCard/PublicedBooks'
-import AllBooks from '@/components/BooksCard/AllBooks'
+import UnsureBooks from '@/components/BooksCard/UnsureBooks'
 import NoneUser from '@/components/BooksCard/NoneUser'
 import AllBookItems from '@/components/BookItems/AllBookItems'
 import EditBookItem from '@/components/BookItems/EditBookItem'
@@ -19,39 +19,50 @@ var router = new Router({
     redirect: { path: 'pending' },
     component: BooksHolder,
     beforeEnter: ((to, from, next) => {
-      console.log(localStorage.token);
+      if ( to.name === "none" ) {
+        next();
+      }
       if (localStorage.token) {
         next();
       } else {
+        console.log("没有token, 调到none")
         next({
-          path: '/login'
+          path: '/none'
         })
       }
     }),
     children: [{
       path: 'none',
+      name: 'none',
       component: NoneUser
     }, {
       path: 'pending',
+      name: 'pending',
       component: PendingBook
     }, {
       path: 'publiced',
+      name: 'publiced',
       component: PublicedBooks
     }, {
-      path: 'all',
-      component: AllBooks
+      path: 'unsure',
+      name: 'unsure',
+      component: UnsureBooks
     }]
   }, {
     path: '/login',
+    name: 'login',
     component: Login
   }, {
     path: '/allbookitems',
+    name: 'allbookitems',
     component: AllBookItems
   }, {
     path: '/editbookitem',
+    name: 'editbookitem',
     component: EditBookItem
   }, {
     path: '/publicedbookdetails',
+    name: 'publicedbookdetails',
     component: PublicedDetail
   }]
 })

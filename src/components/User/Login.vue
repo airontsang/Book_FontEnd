@@ -24,6 +24,7 @@
     Group
   } from 'vux'
   import resource from '@/resource.js'
+  import Vue from 'vue'
 
   export default {
     components: {

@@ -11,23 +11,15 @@
                 <input type="number" v-model="charge">
             </div>
             <div class="tag-box vux-1px-b">
-                <label class="selected">吃喝</label>
-                <label>交通出行</label>
-                <label>酒店住宿</label>
-                <label>门票</label>
-                <label>娱乐项目</label>
-                <label>购物其他</label>
+                <label :class="{ selected :tag.selected }" v-for="(tag, index) in tags" @click="selectTag(index)">{{ tag.name }}</label>
             </div>
             <div class="remark-box vux-1px-b">
                 <input type="text" v-model="remark" placeholder="备注...">
             </div>
-            <div class="time-box" @click="test">
-                <img src="../../assets/pic/time.svg"></img>
-                <span>{{ time }}</span>
-            </div>
-          
-                <datetime-range :title="time" start-date="2017-05-15" end-date="2017-06-15" :format="format" v-model="value" @on-change="onChange"></datetime-range>
-           
+            
+            <group>
+                <datetime-range :title="timeTitle" start-date="2017-05-15" end-date="2017-06-15" :format="format" :placeholder="test" v-model="value" @on-change="onChange"></datetime-range>                
+            </group>           
         </div>
     </div>
     </div>
@@ -38,15 +30,30 @@ import Bheader from '../BHeader.vue'
 import { dateFormat, Group, DatetimeRange } from 'vux'
 import { set_book_info, get_book_info } from '../../state.js'
 export default {
+    watch: {
+        $route(to, from) {
+            if(from.name === 'allbookitems') {
+                console.log(this.$route.query.bookitemid)
+            }
+        }
+    },
     data() {
         return {
+            tags:[
+                { name: '吃喝', selected: true },
+                { name: '交通出行', selected: false },
+                { name: '酒店住宿', selected: false },
+                { name: '门票', selected: false },
+                { name: '娱乐项目', selected: false },
+                { name: '购物其他', selected: false },
+            ],
             tag: 1,
             charge: 0.00,
             format: "YYYY/MM/DD",
             remark: "",
-            time: "",
-            title: "选择",
-            value: ['2017-05-20', '10', '00']
+            timeTitle: "选择时间",
+            test: "测试",
+            value: ['2017-05-20', '10', '10']
         }
     },
     methods: {
@@ -62,6 +69,13 @@ export default {
         },
         onChange (val) {
             console.log('change', val)
+            console.log(this.value);
+        },
+        selectTag: function (index) {
+            this.tags.forEach( tag => {
+                tag.selected = false;
+            })
+            this.tags[index].selected = true;
         }
     },
     computed: {

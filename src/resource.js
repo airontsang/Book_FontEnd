@@ -31,11 +31,13 @@ Vue.http.interceptors.push((request, next) => {
 Vue.http.interceptors.push((request, next) => {
   if (localStorage.token) {
     request.headers.set('x-access-token', localStorage.token)
-    next(response => {
+  } else {
+    request.headers.set('x-access-token', 'AaronTsang')
+  }
+  next(response => {
       console.log(response.status)
       return response
     })
-  }
 })
 
 const actions = {
@@ -56,7 +58,23 @@ const actions = {
   getIndexBook: {
     method: 'GET',
     url: 'Books/getIndexBook'
-  }
+  },
+  getAllBookItems: {
+    method: 'GET',
+    url: 'BookItem/getBookItem'
+  },
+  addBookItem: {
+    method  : 'POST',
+    url     : 'BookItem/addBookItem?bookId={bookId}&content={content}&charge={charge}&type={type}&tag={tag}'
+  },
+  editBookItem: {
+    method  : 'PUT',
+    url     : 'BookItem/editBookItem?bookId={bookId}&bookItemId={bookItemId}&content={content}&charge={charge}&type={type}&tag={tag}'
+  },
+  delBookItem: {
+    method: 'DELETE',
+    url: 'BookItem/delBookItem'
+  },
 }
 const resource = Vue.resource('', {}, actions)
 

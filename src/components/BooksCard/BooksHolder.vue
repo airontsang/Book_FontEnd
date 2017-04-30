@@ -5,7 +5,7 @@
     </transition>
     <div class="fill-gap"></div>
     <tabbar>
-      <tabbar-item :selected="index0" class="tabbar-cus" link="/pending/5">
+      <tabbar-item :selected="index0" class="tabbar-cus" link="/pending?id=5">
         <img slot="icon" src="../../assets/pic/pendding.svg">
         <img slot="icon-active" src="../../assets/pic/pendding_selected.svg">
         <span slot="label">正在进行</span>
