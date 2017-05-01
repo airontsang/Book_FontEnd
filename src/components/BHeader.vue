@@ -11,7 +11,7 @@
                 </button-tab>
                 <p v-else>{{ headerTitle }}</p>
             </div>
-            <div class="submit-but">
+            <div class="submit-but" v-if="isTabbar">
                 <x-icon v-on:click="submit" type="ios-checkmark-empty" class="icon-white" size="30"></x-icon>
             </div>
         </div>
@@ -23,12 +23,15 @@ import { XHeader, ButtonTab, ButtonTabItem } from 'vux'
 export default {
     props: {
         isTabbar: Boolean,
+        tellType: Boolean,
         headerTitle: String
     },
     data() {
         return {
             tag: 0
         }
+    },
+    computed: {
     },
     methods: {
         back: function () {
@@ -44,6 +47,13 @@ export default {
         }
     },
     mounted: function () {
+            if( this.tellType === true ){
+                this.tag = 1
+            } else if( this.tellType === false ){
+                this.tag = 0
+            } else {
+                this.tag = 0
+            }
     },
     components: {
         ButtonTab,
@@ -59,23 +69,26 @@ export default {
     width: 100%;
     display: flex;
     align-items: center;
-    padding-left: 7px;
     background: #393a3f;
     .back-arrow {
+        position: absolute;
         display: flex;
         align-items: center;
         width: 15%;
+        left: 10px;
     }
     .header-content {
-        padding: 8px 55px;
+        padding: 10px 110px;
         text-align: center;
         color: #fff;
         width: 70%;
     }
     .submit-but {
+        position: absolute;
+        right: -9px;
         display: flex;
         align-items: center;
-        width: 15%;
+        width: 12%;
     }
 }
 

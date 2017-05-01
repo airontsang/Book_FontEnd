@@ -69,7 +69,7 @@ const actions = {
   },
   editBookItem: {
     method  : 'PUT',
-    url     : 'BookItem/editBookItem?bookId={bookId}&bookItemId={bookItemId}&content={content}&charge={charge}&type={type}&tag={tag}'
+    url     : 'BookItem/editBookItem'
   },
   delBookItem: {
     method: 'DELETE',

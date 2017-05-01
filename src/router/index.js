@@ -56,7 +56,8 @@ var router = new Router({
   }, {
     path: '/allbookitems',
     name: 'allbookitems',
-    component: AllBookItems
+    component: AllBookItems,
+    meta: { requireBook: true }
   }, {
     path: '/editbookitem',
     name: 'editbookitem',

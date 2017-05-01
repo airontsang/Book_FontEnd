@@ -21,22 +21,20 @@
     </div>
     <div class="item-box">
       <ul>
+        <router-link to="/allbookitems">
         <li class="item-all item-cell vux-1px-b">
-          <div class="all-box">
-            明细
-          </div>
-          <div class="all-text">
-            查看全部
-          </div>
+          <div class="all-box">明细</div>
+            <div class="all-text">查看全部</div>
           <div class="arrow-box">
             <label class="arrow"></label>
           </div>
         </li>
+        </router-link>
         <li class="item-cell vux-1px-b" v-for="item in book.book_item">
           <div class="item-left">
             <div class="item-tag">{{ item.tag }}</div>
             <div class="two-info">
-              <span class="item-time">{{ item.update_at }}</span>
+              <span class="item-time">{{ item.happen_at }}</span>
               <span class="item-content">{{ item.content }}</span>
             </div>
           </div>
@@ -58,45 +56,34 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-    if (!index_book.id) {
-      resource.getIndexBook().then(res => {
-        if (res.status === 200 && res.body.error_code === 0) {
-          console.log(res.body.data)
-          index_book.set(res.body.data.info, res.body.data.bookItems);
-          console.log(index_book);
-          next(vm => {
-            // vm.$router.push({ path: 'pending', query: { bookId: '5'} })
-            vm.book = index_book;
-            vm.$vux.loading.hide()
-          })
-        } else if (res.status === 200 && res.body.error_code === 1006) {
-          next(vm => {
-            vm.$vux.loading.hide()
-            vm.$router.push({ path: 'login' })
-            vm.$vux.toast.show({
-              text: '登录过期',
-              type: 'warn',
-              time: 2000
-            })
-          })
-        }
-      }, err => {
+    resource.getIndexBook().then(res => {
+      if (res.status === 200 && res.body.error_code === 0) {
+        index_book.set(res.body.data.info, res.body.data.bookItems);
+        next(vm => {
+          // vm.$router.push({ path: 'pending', query: { bookId: '5'} })
+          vm.book = index_book;
+          vm.$vux.loading.hide()
+        })
+      } else if (res.status === 200 && res.body.error_code === 1006) {
         next(vm => {
           vm.$vux.loading.hide()
+          vm.$router.push({ path: 'login' })
+          vm.$vux.toast.show({
+            text: '登录过期',
+            type: 'warn',
+            time: 2000
+          })
         })
-      })
-    } else {
-      console.log("不为空")
+      }
+    }, err => {
       next(vm => {
-          vm.$vux.loading.hide()
-          vm.book = index_book;
-        })
-    }
-
+        vm.$vux.loading.hide()
+      })
+    })
   },
   methods: {
     add_item: function () {
-      this.$router.push({ path: 'editbookitem' })
+      this.$router.push({ path: 'editbookitem', query:{ isEdit: false } })
     }
   },
   computed: {

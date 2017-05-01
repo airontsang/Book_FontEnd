@@ -15,9 +15,10 @@ Vue.http.options.headers = {
   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
 };
 
-import { LoadingPlugin, ToastPlugin } from 'vux'
+import { LoadingPlugin, ToastPlugin, ConfirmPlugin } from 'vux'
 Vue.use(LoadingPlugin)
 Vue.use(ToastPlugin)
+Vue.use(ConfirmPlugin)
 /* eslint-disable no-new */
 new Vue({
   router,
