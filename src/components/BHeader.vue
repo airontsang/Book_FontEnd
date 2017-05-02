@@ -11,7 +11,7 @@
                 </button-tab>
                 <p v-else>{{ headerTitle }}</p>
             </div>
-            <div class="submit-but" v-if="isTabbar">
+            <div class="submit-but" v-if="isSubmit">
                 <x-icon v-on:click="submit" type="ios-checkmark-empty" class="icon-white" size="30"></x-icon>
             </div>
         </div>
@@ -23,6 +23,7 @@ import { XHeader, ButtonTab, ButtonTabItem } from 'vux'
 export default {
     props: {
         isTabbar: Boolean,
+        isSubmit: Boolean,
         tellType: Boolean,
         headerTitle: String
     },

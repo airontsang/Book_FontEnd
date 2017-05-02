@@ -8,6 +8,7 @@ import NoneUser from '@/components/BooksCard/NoneUser'
 import AllBookItems from '@/components/BookItems/AllBookItems'
 import EditBookItem from '@/components/BookItems/EditBookItem'
 import PublicedDetail from '@/components/BooksCard/PublicedDetail'
+import EditBook from '@/components/BooksCard/EditBook'
 import Login from '@/components/User/Login.vue'
 
 import { index_book } from '../state'
@@ -67,6 +68,10 @@ var router = new Router({
     path: '/publicedbookdetails',
     name: 'publicedbookdetails',
     component: PublicedDetail
+  }, {
+    path: '/editbook',
+    name: 'editbook',
+    component: EditBook
   }]
 })
 
