@@ -1,78 +1,131 @@
 <template>
   <div>
-    <div style="margin: 10px;overflow: hidden;" v-for="item in list">
-      <masker style="border-radius: 2px;">
-        <div class="m-img" :style="{backgroundImage: 'url(' + item.img + ')'}"></div>
-        <div slot="content" class="m-title">
-          {{item.title}}
-          <br/>
-          <span class="m-time">2016-03-18</span>
+    <swiper :height="height + 'px'" dots-position="center">
+      <swiper-item class="black" v-for="item in list">
+        <div class="no-box" :style="{ height: height*0.33 + 'px'}">
+          {{ item.title }}
         </div>
-      </masker>
-    </div>
-    <div style="margin: 10px;overflow: hidden;">
-      <masker style="border-radius: 2px;" color="F9C90C" :opacity="0.8">
-        <div class="m-img" style="background-image:url(https://cdn.xiaotaojiang.com/uploads/56/4b3601364b86fdfd234ef11d8712ad/_.jpg)"></div>
-        <div slot="content" class="m-title">
-          VUX
-          <br/>
-          <span class="m-time">2016-03-18</span>
+        <div class="content-box" :style="{ height: contentH + 'px'}">
+          <img :style="{ height: contentH*0.6 + 'px'}" src="static/default.jpg">
         </div>
-      </masker>
-    </div>
+      </swiper-item>
+    </swiper>
   </div>
 </template>
 
 <script>
-import { Masker } from 'vux'
+import { Swiper, SwiperItem } from 'vux'
 
 export default {
   components: {
-    Masker
+    Swiper,
+    SwiperItem
   },
-  data () {
+  data() {
     return {
+      height: '',
+      contentH: '',
       list: [{
+        title: '06届下李朗小学聚会',
+        img: 'https://cdn.xiaotaojiang.com/uploads/82/1572ec37969ee263735262dc017975/_.jpg'
+      }, {
+        title: '06届下李朗小学聚会',
+        img: 'https://cdn.xiaotaojiang.com/uploads/82/1572ec37969ee263735262dc017975/_.jpg'
+      }, {
+        title: '06届下李朗小学聚会',
+        img: 'https://cdn.xiaotaojiang.com/uploads/82/1572ec37969ee263735262dc017975/_.jpg'
+      }, {
         title: '06届下李朗小学聚会',
         img: 'https://cdn.xiaotaojiang.com/uploads/82/1572ec37969ee263735262dc017975/_.jpg'
       }]
     }
   },
+  methods: {
+    getBrowserInterfaceSize: function () {
+      var pageWidth = window.innerWidth;
+      var pageHeight = window.innerHeight;
+      if (typeof pageWidth != "number") {
+        //在标准模式下面
+        if (document.compatMode == "CSS1Compat") {
+          pageWidth = document.documentElement.clientWidth;
+          pageHeight = document.documentElement.clientHeight;
+        } else {
+          pageWidth = document.body.clientWidth;
+          pageHeight = window.body.clientHeight;
+        }
+      }
+      return {
+        pageWidth: pageWidth,
+        pageHeight: pageHeight
+      }
+    }
+  },
   mounted: function () {
-  }
+    let result = this.getBrowserInterfaceSize()
+    this.height = (result.pageHeight-54);
+    this.contentH = result.pageWidth * 0.875
+   }
 }
 </script>
 
 <style lang="less">
-.m-img {
-  padding-bottom: 33%;
-  display: block;
-  position: relative;
-  max-width: 100%;
-  background-size: cover;
-  background-position: center center;
-  cursor: pointer;
-  border-radius: 2px;
-}
-.m-title {
-  color: #fff;
-  text-align: center;
-  text-shadow: 0 0 2px rgba(0, 0, 0, .5);
-  font-weight: 500;
-  font-size: 16px;
-  position: absolute;
-  left: 0;
-  right: 0;
+.black {
+  background-color: #1AAD19;
   width: 100%;
-  text-align: center;
-  top: 50%;
-  transform: translateY(-50%);
 }
-.m-time {
-  font-size: 12px;
-  padding-top: 4px;
-  border-top: 1px solid #f0f0f0;
-  display: inline-block;
-  margin-top: 5px;
+
+.title {
+  line-height: 100px;
+  text-align: center;
+  color: #fff;
+}
+
+.no-box {
+}
+
+.content-box {
+  width: 70%;
+  height: 410px;
+  background: #fff;
+  margin: auto;
+  img {
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+.vux-indicator.custom-bottom {
+  bottom: 30px;
+}
+
+@-webkit-keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fadeInUp {
+  animation-name: fadeInUp;
 }
 </style>

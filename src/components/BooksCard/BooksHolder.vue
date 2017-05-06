@@ -15,7 +15,7 @@
         <img slot="icon-active" src="../../assets/pic/publiced_selected.svg">
         <span slot="label">已公示</span>
       </tabbar-item>
-      <tabbar-item :selected="index2" class="tabbar-cus" link="/all">
+      <tabbar-item :selected="index2" class="tabbar-cus" link="/unsure">
         <img slot="icon" src="../../assets/pic/all.svg">
         <img slot="icon-active" src="../../assets/pic/all_selected.svg">
         <span slot="label">全部</span>

@@ -12,7 +12,7 @@
                 <p v-else>{{ headerTitle }}</p>
             </div>
             <div class="submit-but" v-if="isSubmit">
-                <x-icon v-on:click="submit" type="ios-checkmark-empty" class="icon-white" size="30"></x-icon>
+                <x-icon v-on:click="submit" :class="{ isClicked: !isClick }" type="ios-checkmark-empty" class="icon-white" size="30"></x-icon>
             </div>
         </div>
     </div>
@@ -24,6 +24,7 @@ export default {
     props: {
         isTabbar: Boolean,
         isSubmit: Boolean,
+        isClick: Boolean,
         tellType: Boolean,
         headerTitle: String
     },
@@ -91,6 +92,12 @@ export default {
         align-items: center;
         width: 12%;
     }
+}
+
+.isClicked {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.4;
 }
 
 .vux-x-icon {

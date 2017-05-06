@@ -75,6 +75,30 @@ const actions = {
     method: 'DELETE',
     url: 'BookItem/delBookItem'
   },
+  addBook: {
+    method: 'POST',
+    url: 'Books/addBook'
+  },
+  editBook: {
+    method: 'PUT',
+    url: 'Books/editBookInfo'
+  },
+  delBook: {
+    method: 'DELETE',
+    url: 'Books/delBook'
+  },
+  uploadBookPic: {
+    method: 'POST',
+    url: 'Books/bookPic/uploading'
+  },
+  getBookPic: {
+    method: 'GET',
+    url: 'Books/getBookPic'
+  },
+  getUnsureBooks: {
+    method: 'GET',
+    url:  'Books/getBooks'
+  }
 }
 const resource = Vue.resource('', {}, actions)
 

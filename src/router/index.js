@@ -71,7 +71,8 @@ var router = new Router({
   }, {
     path: '/editbook',
     name: 'editbook',
-    component: EditBook
+    component: EditBook,
+    meta: { requireBook: true }
   }]
 })
 

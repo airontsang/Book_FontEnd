@@ -10,47 +10,42 @@
         </div>
       </masker>
     </div>
-    <div style="margin: 10px;overflow: hidden;">
-      <masker style="border-radius: 2px;" color="F9C90C" :opacity="0.8">
-        <div class="m-img" style="background-image:url(https://cdn.xiaotaojiang.com/uploads/56/4b3601364b86fdfd234ef11d8712ad/_.jpg)"></div>
-        <div slot="content" class="m-title">
-          VUX
-          <br/>
-          <span class="m-time">2016-03-18</span>
-        </div>
-      </masker>
-    </div>
   </div>
 </template>
 
 <script>
 import { Masker } from 'vux'
+import  Vue  from 'vue'
+import  resource  from '../../resource.js'
 export default {
   components: {
     Masker
   },
   data () {
     return {
-      list: [{
-        title: '洗颜新潮流！人气洁面皂排行榜',
-        img: 'https://cdn.xiaotaojiang.com/uploads/82/1572ec37969ee263735262dc017975/_.jpg'
-      }, {
-        title: '美容用品 & 日用品（上）',
-        img: 'https://cdn.xiaotaojiang.com/uploads/59/b22e0e62363a4a652f28630b3233b9/_.jpg'
-      }, {
-        title: '远离车内毒气，日本车载空气净化器精选',
-        img: 'https://cdn.xiaotaojiang.com/uploads/56/4b3601364b86fdfd234ef11d8712ad/_.jpg'
-      }, {
-        title: '06届下李朗小学1班聚会',
-        img: 'https://cdn.xiaotaojiang.com/uploads/59/b22e0e62363a4a652f28630b3233b9/_.jpg'
-      }, {
-        title: '09届布吉中学10班聚会',
-        img: 'https://cdn.xiaotaojiang.com/uploads/59/b22e0e62363a4a652f28630b3233b9/_.jpg'
-      }, {
-        title: '13届平冈中学19班聚会',
-        img: 'https://cdn.xiaotaojiang.com/uploads/59/b22e0e62363a4a652f28630b3233b9/_.jpg'
-      }]
+      list: []
     }
+  },
+  mounted: function () {
+    this.$vux.loading.show({
+      text: "加载中"
+    })
+    resource.getUnsureBooks({
+      pageIndex: 1,
+      pageSize: 100
+    }).then( res => {
+      var _this = this;
+      if(res.status === 200 && res.body.error_code === 0){
+        res.body.data.forEach( book => {
+          
+          let bookIn = {}
+          bookIn.title = book.title
+          bookIn.img   = Vue.http.options.root + '/Books/getBookPic?fileName=' + book.picUrl
+          _this.list.push(bookIn)
+        })
+        this.$vux.loading.hide();
+      }
+    })
   }
 }
 </script>

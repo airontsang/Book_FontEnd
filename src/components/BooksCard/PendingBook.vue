@@ -3,10 +3,14 @@
     <div class="header-box">
       <h1 class="header-title">{{ book.title }}</h1>
       <div class="header-edit">
-        <x-icon type="ios-plus" size="37"></x-icon>
+        <router-link :to="{ path: '/editbook', query:{ isEdit: false }}">
+          <x-icon type="ios-plus" size="37"></x-icon>
+        </router-link>
       </div>
       <div class="header-add">
+        <router-link :to="{ path: '/editbook', query:{ isEdit: true }}">
         <x-icon type="ios-help" size="37"></x-icon>
+        </router-link>
       </div>
     </div>
     <div class="info-box">
@@ -48,6 +52,7 @@
 <script>
 import resource from '@/resource.js'
 import { Group, XButton, Cell, CellBox } from 'vux'
+import moment from 'moment'
 import { index_book } from '../../state.js'
 export default {
   data() {
@@ -56,12 +61,20 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-    resource.getIndexBook().then(res => {
+    if(index_book.id){
+      next( vm => {
+        vm.$vux.loading.hide()
+        vm.book = index_book;
+      })
+    } else {
+      console.log("没有数据，重新加载")      
+      resource.getIndexBook().then(res => {
       if (res.status === 200 && res.body.error_code === 0) {
         index_book.set(res.body.data.info, res.body.data.bookItems);
         next(vm => {
           // vm.$router.push({ path: 'pending', query: { bookId: '5'} })
           vm.book = index_book;
+          vm.book.partyTime = moment(vm.book.partyTime).format('YYYY-MM-DD')
           vm.$vux.loading.hide()
         })
       } else if (res.status === 200 && res.body.error_code === 1006) {
@@ -80,6 +93,7 @@ export default {
         vm.$vux.loading.hide()
       })
     })
+    }
   },
   methods: {
     add_item: function () {
@@ -91,7 +105,7 @@ export default {
   },
   mounted: function () {
     this.$vux.loading.show({
-      text: '首页加载中'
+      text: "加载中"
     })
   },
   components: {

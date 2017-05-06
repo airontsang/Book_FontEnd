@@ -6,7 +6,7 @@ var index_book = {
   picUrl: '',
   place: '',
   isPlublic: false,
-  partyTime: new Date("month,dd,hh,mm"),
+  partyTime: '',
   sum: 0,
   spend: 0,
   balance: 0,
@@ -27,7 +27,7 @@ index_book.set = function (info, bookItems) {
   this.picUrl = info.picUrl;
   this.place = info.place;
   this.intro = info.intro;
-  this.partyTime = moment(new Date()).format('YYYY-MM-DD');
+  this.partyTime = info.partyTime;
   this.sum = info.sum;
   this.spend = info.spend;
   this.balance = info.balance;
