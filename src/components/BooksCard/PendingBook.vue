@@ -9,7 +9,7 @@
       </div>
       <div class="header-add">
         <router-link :to="{ path: '/editbook', query:{ isEdit: true }}">
-        <x-icon type="ios-help" size="37"></x-icon>
+          <x-icon type="ios-help" size="37"></x-icon>
         </router-link>
       </div>
     </div>
@@ -26,13 +26,13 @@
     <div class="item-box">
       <ul>
         <router-link to="/allbookitems">
-        <li class="item-all item-cell vux-1px-b">
-          <div class="all-box">明细</div>
+          <li class="item-all item-cell vux-1px-b">
+            <div class="all-box">明细</div>
             <div class="all-text">查看全部</div>
-          <div class="arrow-box">
-            <label class="arrow"></label>
-          </div>
-        </li>
+            <div class="arrow-box">
+              <label class="arrow"></label>
+            </div>
+          </li>
         </router-link>
         <li class="item-cell vux-1px-b" v-for="item in book.book_item">
           <div class="item-left">
@@ -45,6 +45,7 @@
           <div class="item-right">￥{{ item.charge }}</div>
         </li>
       </ul>
+      <x-button @click.native="toPublic" type="primary" action-type="button">公示</x-button>      
     </div>
   </div>
 </template>
@@ -61,52 +62,99 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-    if(index_book.id){
-      next( vm => {
-        vm.$vux.loading.hide()
-        vm.book = index_book;
+    console.log(to.query.id)
+    if (to.query.id) {
+      resource.getAllBookItems({
+        bookId: to.query.id
+      }).then(res => {
+        if (res.status === 200 && res.body.error_code === 0) {
+          if (res.body.data.length == 0) {
+            console.log("长度为0")
+            index_book.book_item = []
+          } else {
+            index_book.setIndexItem(res.body.data);
+          }
+          next(vm => {
+            console.log("运行了")
+            // vm.$vux.loading.hide()
+            // vm.book = index_book;
+            // console.log(vm.book)            
+          })
+        }
+      }, err => {
+        console.log(err)
+        next();
       })
     } else {
-      console.log("没有数据，重新加载")      
-      resource.getIndexBook().then(res => {
-      if (res.status === 200 && res.body.error_code === 0) {
-        index_book.set(res.body.data.info, res.body.data.bookItems);
+      if (index_book.id) {
+        console.log("query没有值，index_book有")
         next(vm => {
-          // vm.$router.push({ path: 'pending', query: { bookId: '5'} })
-          vm.book = index_book;
-          vm.book.partyTime = moment(vm.book.partyTime).format('YYYY-MM-DD')
-          vm.$vux.loading.hide()
+          vm.$nextTick(function () {
+            vm.$vux.loading.hide()
+            // vm.book = index_book;
+            // console.log(vm.book)
+            vm.book.place = "深圳"
+          })
         })
-      } else if (res.status === 200 && res.body.error_code === 1006) {
-        next(vm => {
-          vm.$vux.loading.hide()
-          vm.$router.push({ path: 'login' })
-          vm.$vux.toast.show({
-            text: '登录过期',
-            type: 'warn',
-            time: 2000
+      } else {
+        resource.getIndexBook().then(res => {
+          if (res.status === 200 && res.body.error_code === 0) {
+            index_book.set(res.body.data.info, res.body.data.bookItems);
+            next(vm => {
+              // vm.$router.push({ path: 'pending', query: { bookId: '5'} })
+              console.log("这里是vm")
+              vm.book = index_book;
+              vm.book.partyTime = moment(vm.book.partyTime).format('YYYY-MM-DD')
+              vm.$vux.loading.hide()
+            })
+          } else if (res.status === 200 && res.body.error_code === 1006) {
+            next(vm => {
+              vm.$vux.loading.hide()
+              vm.$router.push({ path: 'login' })
+              vm.$vux.toast.show({
+                text: '登录过期',
+                type: 'warn',
+                time: 2000
+              })
+            })
+          }
+        }, err => {
+          next(vm => {
+            vm.$vux.loading.hide()
           })
         })
       }
-    }, err => {
-      next(vm => {
-        vm.$vux.loading.hide()
-      })
-    })
     }
   },
   methods: {
     add_item: function () {
-      this.$router.push({ path: 'editbookitem', query:{ isEdit: false } })
+      this.$router.push({ path: 'editbookitem', query: { isEdit: false } })
+    },
+    toPublic: function () {
+      this.$vux.loading.show({
+        text: "公示中"
+      })
+      resource.toPublic({}, {
+        bookId: index_book.id
+      }).then( res => {
+        if (res.status === 200 && res.body.error_code === 0 ) {
+          this.$router.push({ path: "/publiced"})
+        }
+      })
     }
   },
-  computed: {
-
-  },
   mounted: function () {
-    this.$vux.loading.show({
-      text: "加载中"
-    })
+    if (this.$route.query.id) {
+      this.book = index_book;
+      this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
+      this.$vux.loading.hide()
+    } else if (index_book.id) {
+      this.book = index_book
+    } else {
+      this.$vux.loading.show({
+        text: "加载中"
+      })
+    }
   },
   components: {
     Group,

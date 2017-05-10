@@ -1,53 +1,125 @@
 <template>
     <div>
-        <b-header v-on:back="back" v-on:submit="submit" :is-tabbar=false :headerTitle="title"></b-header>
-        <x-input title="标题" v-model="bookTitle"></x-input>
-        <x-input title="聚会时间" v-model="partyTime"></x-input>
-        <x-input title="地点" v-model="partyPlace"></x-input>
-        <x-textarea title="简介" v-model="bookIntro"></x-textarea>
+        <x-header :right-options="{showMore: true}" @on-click-more="showMenus = true">{{ book.bookTitle }}</x-header>
+        <form-preview :header-label="formTitle" header-value="来一个标题就好" :body-items="list"></form-preview>
+        <div v-transfer-dom>
+            <actionsheet :menus="menus" v-model="showMenus" show-cancel></actionsheet>
+        </div>
     </div>
 </template>
 
 <script>
-    import BHeader from '../BHeader.vue'
-    import { Group, XInput, XTextarea } from 'vux'
-    import { set_book_info, get_book_info } from '../../state.js'
-    export default {
-        data() {
-            return {
-                tag: 1,
-                title: "公示細則",
-                bookTitle: "13届下李朗小学聚会",
-                partyTime: "05月05号",
-                partyPlace: "深圳南山",
-                bookIntro: "你好，大家还好吗，我时常还会梦见大家。高中的时候，会觉得初中那美好的时光是那么近，又那么远；可现在觉得，原来已经那么远了，却又不想去承认"
-            }
-        },
-        methods: {
-            back: function () {
-                alert("back")
+import { XHeader, Actionsheet, TransferDom, FormPreview } from 'vux'
+import { Group, XInput, XTextarea } from 'vux'
+import { set_book_info, get_book_info } from '../../state.js'
+import moment from "moment"
+import resource from '../../resource.js'
+export default {
+    directives: {
+        TransferDom
+    },
+    data() {
+        return {
+            tag: 1,
+            tick1: false,
+            tick2: false,
+            formTitle: "标题",
+            list: [{
+                label: '创建时间',
+                value: '电动打蛋机'
+            },{
+                label: '公示时间',
+                value: '电动打蛋机'
+            }, {
+                label: '地点',
+                value: '名字名字名字'
+            }, {
+                label: '简介',
+                value: '很长很长的名字很长很长的名字很长很长的名字很长很长的名字很长很长的名字'
+            },{
+                label: '聚会时间',
+                value: '电动打蛋机'
+            },{
+                label: '总收款',
+                value: '电动打蛋机'
+            },{
+                label: '总花费',
+                value: '电动打蛋机'
+            },{
+                label: '余额',
+                value: '电动打蛋机'
+            },{
+                label: '凭证ID',
+                value: '电动打蛋机'
+            },{
+                label: '区块标识',
+                value: '电动打蛋机'
+            },{
+                label: '全数据HASH',
+                value: '电动打蛋机'
+            }],
+            book: {},
+            bookItems: [],
+            menus: {
+                menu1: 'Take Photo',
+                menu2: 'Choose from photos'
             },
-            submit: function () {
-                alert("submit")
-            }
-        },
-        computed: {
-
-
-        },
-        mounted: function () {
-        },
-        components: {
-            'b-header': BHeader,
-            Group,
-            XInput,
-            XTextarea
+            showMenus: false
         }
+    },
+    computed: {
+    },
+    methods: {
+        back: function () {
+            alert("back")
+        },
+        submit: function () {
+            alert("submit")
+        },
+        getBookInfo: function () {
+            resource.onePublicedBook({
+                bookId: this.$route.query.bookId
+            }).then(res => {
+                if (res.status === 200 && res.body.error_code === 0) {
+                    this.book = res.body.data
+                }
+                this.tick1 = true;
+            })
+        },
+        getBookItems: function () {
+            resource.getAllBookItems({
+                bookId: this.$route.query.bookId,
+                pageIndex: 1,
+                pageSize: 100
+            }).then(res => {
+                if (res.status === 200 && res.body.error_code === 0) {
+                    res.body.data.forEach((item, index) => {
+                        item.happen_at = moment(item.happen_at).format("MM-DD HH:mm")
+                    })
+                    this.bookItems = res.body.data;
+                }
+                this.tick2 = true;
+                this.$vux.loading.hide()                
+            })
+        },
+
+    },
+    mounted: function () {
+        this.$vux.loading.show({
+            text: "加载中"
+        })
+        this.getBookInfo()
+        this.getBookItems()
+    },
+    components: {
+        XHeader,
+        Actionsheet,
+        FormPreview
     }
+}
 
 </script>
 
 <style scoped lang="less">
-    @import '~vux/src/styles/1px.less';
-
+@import '~vux/src/styles/1px.less';
 </style>

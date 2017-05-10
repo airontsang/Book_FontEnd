@@ -54,10 +54,12 @@ export default {
         }).then(res => {
             if (res.status === 200 && res.body.error_code === 0) {
                 next(vm => {
+                    console.log(res.body.data[1])
                     vm.allItem = res.body.data;
-                    // index_book.setIndexItem(res.body.data);
+                    index_book.setIndexItem(res.body.data);
                     let onlyMonth = {};
                     res.body.data.forEach((item, index) => {
+                        // console.log(item)
                         let month = moment(item.happen_at).format('M' + '月')
                         item.happen_atF = moment(item.happen_at).format("MM-DD HH:mm")
                         if (!onlyMonth[month]) {
@@ -121,6 +123,7 @@ export default {
         XButton
     },
     mounted: function () {
+        console.log("进入了")
         this.$vux.loading.show({
             text: '加载中'
         })

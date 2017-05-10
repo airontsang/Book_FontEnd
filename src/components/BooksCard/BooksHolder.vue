@@ -5,7 +5,7 @@
     </transition>
     <div class="fill-gap"></div>
     <tabbar>
-      <tabbar-item :selected="index0" class="tabbar-cus" link="/pending?id=5">
+      <tabbar-item :selected="index0" class="tabbar-cus" link="/pending">
         <img slot="icon" src="../../assets/pic/pendding.svg">
         <img slot="icon-active" src="../../assets/pic/pendding_selected.svg">
         <span slot="label">正在进行</span>
@@ -24,42 +24,58 @@
   </div>
 </template>
 <script>
-  import {
-    Tabbar,
-    TabbarItem
-  } from 'vux'
+import {
+  Tabbar,
+  TabbarItem
+} from 'vux'
 
-  export default {
-    components: {
-      Tabbar,
-      TabbarItem,
-    },
-    data() {
-        return {
-            index0: true,
-            index1: false,
-            index2: false            
-        }
+export default {
+  components: {
+    Tabbar,
+    TabbarItem,
+  },
+  data() {
+    return {
+      index0: true,
+      index1: false,
+      index2: false
+    }
+  },
+  watch: {
+    $route(to, from) {
+      if (to.name == "pending") {
+        this.index0 = true;
+        this.index1 = false;
+        this.index2 = false;
+      } else if (to.name == "publiced") {
+        this.index0 = false;
+        this.index1 = true;
+        this.index2 = false;
+      } else {
+        this.index0 = false;
+        this.index1 = false;
+        this.index2 = true;
+      }
     }
   }
+}
 
 </script>
 <style>
-  .tabbar-cus {
-    font-weight: bold;
-  }
-  
-  .weui-tabbar__icon {
-    padding: 2px 0 2px 0;
-  }
-  
-  .weui-tabbar {
-    position: fixed!important;
-  }
-  
-  .fill-gap {
-    width: 100%;
-    height: 57px;
-  }
+.tabbar-cus {
+  font-weight: bold;
+}
 
+.weui-tabbar__icon {
+  padding: 2px 0 2px 0;
+}
+
+.weui-tabbar {
+  position: fixed!important;
+}
+
+.fill-gap {
+  width: 100%;
+  height: 57px;
+}
 </style>

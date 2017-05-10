@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div style="margin: 10px;overflow: hidden;" v-for="item in list">
-      <masker style="border-radius: 2px;">
+    <div @click="goPending(index)" style="margin: 10px;overflow: hidden;" v-for="(item, index) in list" :key="item._id">
+        <masker style="border-radius: 2px;">
         <div class="m-img" :style="{backgroundImage: 'url(' + item.img + ')'}"></div>
         <div slot="content" class="m-title">
           {{item.title}}
           <br/>
-          <span class="m-time">2016-03-18</span>
+          <span class="m-time">{{ item.showTime }}</span>
         </div>
       </masker>
     </div>
@@ -16,14 +16,32 @@
 <script>
 import { Masker } from 'vux'
 import  Vue  from 'vue'
+import moment from 'moment'
 import  resource  from '../../resource.js'
+import { index_book } from '../../state.js'
 export default {
   components: {
     Masker
   },
   data () {
     return {
-      list: []
+      list: [],
+    }
+  },
+  methods: {
+    goPending: function (index) {
+      index_book.reset()
+      index_book.id        = this.list[index]._id
+      index_book.title     = this.list[index].title
+      index_book.intro     = this.list[index].intro
+      index_book.picUrl    = this.list[index].picUrl
+      index_book.place     = this.list[index].place
+      index_book.isPublic = this.list[index].isPublic
+      index_book.partyTime = this.list[index].partyTime
+      index_book.sum       = this.list[index].sum
+      index_book.spend     = this.list[index].spend
+      index_book.balance   = this.list[index].balance
+      this.$router.push({ path:"/pending", query:{ id: this.list[index]._id} })
     }
   },
   mounted: function () {
@@ -37,9 +55,18 @@ export default {
       var _this = this;
       if(res.status === 200 && res.body.error_code === 0){
         res.body.data.forEach( book => {
-          
           let bookIn = {}
-          bookIn.title = book.title
+          bookIn._id       = book._id 
+          bookIn.title     = book.title
+          bookIn.intro     = book.intro
+          bookIn.isPublic  = book.isPublic
+          bookIn.partyTime = book.partyTime
+          bookIn.showTime  = moment(book.partyTime).format("YYYY-MM-DD")
+          bookIn.place     = book.place
+          bookIn.sum       = book.sum
+          bookIn.spend     = book.spend
+          bookIn.balance   = book.balance
+          bookIn.picUrl    = book.picUrl
           bookIn.img   = Vue.http.options.root + '/Books/getBookPic?fileName=' + book.picUrl
           _this.list.push(bookIn)
         })

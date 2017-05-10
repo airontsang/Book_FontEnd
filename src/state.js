@@ -5,7 +5,7 @@ var index_book = {
   intro: '',
   picUrl: '',
   place: '',
-  isPlublic: false,
+  isPublic: false,
   partyTime: '',
   sum: 0,
   spend: 0,
@@ -14,7 +14,7 @@ var index_book = {
 }
 
 index_book.formatTime = function (bookItems) {
-    bookItems.map(item => {
+  bookItems.map(item => {
     item.happen_at = moment(item.happen_at).format('MM-DD HH:mm');
     return item;
   })
@@ -31,9 +31,9 @@ index_book.set = function (info, bookItems) {
   this.sum = info.sum;
   this.spend = info.spend;
   this.balance = info.balance;
-  this.isPlublic = info.isPublic;
+  this.isPublic = info.isPublic;
 
-  
+
   this.book_item = this.formatTime(bookItems);
 }
 
@@ -47,7 +47,7 @@ index_book.reset = function () {
   this.sum = 0;
   this.spend = 0;
   this.balance = 0;
-  this.isPlublic = false;
+  this.isPublic = false;
   this.book_item = [];
 }
 
@@ -59,9 +59,15 @@ index_book.newItem = function (newItem) {
 }
 
 index_book.setIndexItem = function (allItem) {
-  for (let i = 0; i <= 3; i++) {
-    this.book_item[i] = allItem[i]
-    this.book_item[i].happen_at = moment(allItem[i].happen_at).format('MM-DD HH:mm')
+  console.log(allItem)
+  if (allItem.length = 0) {
+    
+    this.book_item = []
+  } else {
+    for (let i = 0; i <= 3; i++) {
+      this.book_item[i] = allItem[i]
+      this.book_item[i].happen_at = moment(allItem[i].happen_at).format('MM-DD HH:mm')
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-header @back="Fback" @submit="Fsubmit" @typeChanged="typeCome" :is-tabbar=true :tellType="type"></b-header>
+    <b-header @back="Fback" @submit="Fsubmit" @typeChanged="typeCome" :is-tabbar=true :isClick=true :isSubmit=true :tellType="type"></b-header>
     <div class="text-box">
       <div class="input-box vux-1px-b">
         <div class="label-box">

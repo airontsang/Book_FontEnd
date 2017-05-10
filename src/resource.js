@@ -98,6 +98,18 @@ const actions = {
   getUnsureBooks: {
     method: 'GET',
     url:  'Books/getBooks'
+  },
+  toPublic: {
+    method: 'POST',
+    url: 'toBlock/create'
+  },
+  getPublicedBooks: {
+    method: 'GET',
+    url: 'Books/getPublicedBooks'
+  },
+  onePublicedBook: {
+    method: 'GET',
+    url: 'Books/onePublicedBook'
   }
 }
 const resource = Vue.resource('', {}, actions)
