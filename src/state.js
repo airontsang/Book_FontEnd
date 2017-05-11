@@ -59,14 +59,13 @@ index_book.newItem = function (newItem) {
 }
 
 index_book.setIndexItem = function (allItem) {
-  console.log(allItem)
+  this.book_item = []
   if (allItem.length = 0) {
-    
     this.book_item = []
   } else {
     for (let i = 0; i <= 3; i++) {
-      this.book_item[i] = allItem[i]
-      this.book_item[i].happen_at = moment(allItem[i].happen_at).format('MM-DD HH:mm')
+    console.log(allItem[i])      
+      this.book_item.push(allItem[i])
     }
   }
 }

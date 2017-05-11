@@ -45,7 +45,7 @@
           <div class="item-right">￥{{ item.charge }}</div>
         </li>
       </ul>
-      <x-button @click.native="toPublic" type="primary" action-type="button">公示</x-button>      
+      <x-button @click.native="toPublic" type="primary" action-type="button">公示</x-button>
     </div>
   </div>
 </template>
@@ -61,71 +61,6 @@ export default {
       book: {},
     }
   },
-  beforeRouteEnter(to, from, next) {
-    console.log(to.query.id)
-    if (to.query.id) {
-      resource.getAllBookItems({
-        bookId: to.query.id
-      }).then(res => {
-        if (res.status === 200 && res.body.error_code === 0) {
-          if (res.body.data.length == 0) {
-            console.log("长度为0")
-            index_book.book_item = []
-          } else {
-            index_book.setIndexItem(res.body.data);
-          }
-          next(vm => {
-            console.log("运行了")
-            // vm.$vux.loading.hide()
-            // vm.book = index_book;
-            // console.log(vm.book)            
-          })
-        }
-      }, err => {
-        console.log(err)
-        next();
-      })
-    } else {
-      if (index_book.id) {
-        console.log("query没有值，index_book有")
-        next(vm => {
-          vm.$nextTick(function () {
-            vm.$vux.loading.hide()
-            // vm.book = index_book;
-            // console.log(vm.book)
-            vm.book.place = "深圳"
-          })
-        })
-      } else {
-        resource.getIndexBook().then(res => {
-          if (res.status === 200 && res.body.error_code === 0) {
-            index_book.set(res.body.data.info, res.body.data.bookItems);
-            next(vm => {
-              // vm.$router.push({ path: 'pending', query: { bookId: '5'} })
-              console.log("这里是vm")
-              vm.book = index_book;
-              vm.book.partyTime = moment(vm.book.partyTime).format('YYYY-MM-DD')
-              vm.$vux.loading.hide()
-            })
-          } else if (res.status === 200 && res.body.error_code === 1006) {
-            next(vm => {
-              vm.$vux.loading.hide()
-              vm.$router.push({ path: 'login' })
-              vm.$vux.toast.show({
-                text: '登录过期',
-                type: 'warn',
-                time: 2000
-              })
-            })
-          }
-        }, err => {
-          next(vm => {
-            vm.$vux.loading.hide()
-          })
-        })
-      }
-    }
-  },
   methods: {
     add_item: function () {
       this.$router.push({ path: 'editbookitem', query: { isEdit: false } })
@@ -136,23 +71,65 @@ export default {
       })
       resource.toPublic({}, {
         bookId: index_book.id
-      }).then( res => {
-        if (res.status === 200 && res.body.error_code === 0 ) {
-          this.$router.push({ path: "/publiced"})
+      }).then(res => {
+        if (res.status === 200 && res.body.error_code === 0) {
+          this.$router.push({ path: "/publiced" })
         }
       })
     }
   },
   mounted: function () {
+    this.$vux.loading.show({
+      text: "加载中"
+    })
     if (this.$route.query.id) {
       this.book = index_book;
-      this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
-      this.$vux.loading.hide()
+      resource.getAllBookItems({
+        bookId: this.$route.query.id
+      }).then(res => {
+        if (res.status === 200 && res.body.error_code === 0) {
+          if (res.body.data.length == 0) {
+            console.log("长度为0")
+            index_book.book_item = []
+          } else {
+            res.body.data.forEach((item, index) => {
+              if (index < 4) {
+                item.happen_at = moment(item.happen_at).format("MM-DD HH:mm")
+                index_book.book_item.push(item)
+              }
+            })
+            this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
+            this.$vux.loading.hide()
+          }
+        }
+        this.$vux.loading.hide()
+      }, err => {
+        console.log(err)
+        next();
+      })
     } else if (index_book.id) {
+      this.$vux.loading.hide()
       this.book = index_book
     } else {
-      this.$vux.loading.show({
-        text: "加载中"
+      resource.getIndexBook().then(res => {
+        if (res.status === 200 && res.body.error_code === 0) {
+          index_book.set(res.body.data.info, res.body.data.bookItems);
+          this.book = index_book;
+          this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
+          this.$vux.loading.hide()
+        } else if (res.status === 200 && res.body.error_code === 1006) {
+          next(vm => {
+            this.$vux.loading.hide()
+            this.$router.push({ path: 'login' })
+            this.$vux.toast.show({
+              text: '登录过期',
+              type: 'warn',
+              time: 2000
+            })
+          })
+        }
+      }, err => {
+        this.$vux.loading.hide()
       })
     }
   },

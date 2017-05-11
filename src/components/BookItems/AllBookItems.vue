@@ -46,37 +46,37 @@ export default {
             allItem: {}
         }
     },
-    beforeRouteEnter(to, from, next) {
-        resource.getAllBookItems({
-            bookId: index_book.id,
-            pageIndex: 1,
-            pageSize: 100
-        }).then(res => {
-            if (res.status === 200 && res.body.error_code === 0) {
-                next(vm => {
-                    console.log(res.body.data[1])
-                    vm.allItem = res.body.data;
-                    index_book.setIndexItem(res.body.data);
-                    let onlyMonth = {};
-                    res.body.data.forEach((item, index) => {
-                        // console.log(item)
-                        let month = moment(item.happen_at).format('M' + '月')
-                        item.happen_atF = moment(item.happen_at).format("MM-DD HH:mm")
-                        if (!onlyMonth[month]) {
-                            onlyMonth[month] = [];
-                        }
-                        onlyMonth[month].push(item)
-                    })
-                    vm.allItem = onlyMonth;
-                    vm.$vux.loading.hide()
-                })
-            }
-        }, err => {
-            next(vm => {
-                vm.$vux.loading.hide()
-            })
-        })
-    },
+    // beforeRouteEnter(to, from, next) {
+    //     resource.getAllBookItems({
+    //         bookId: index_book.id,
+    //         pageIndex: 1,
+    //         pageSize: 100
+    //     }).then(res => {
+    //         if (res.status === 200 && res.body.error_code === 0) {
+    //             next(vm => {
+    //                 console.log(res.body.data[1])
+    //                 vm.allItem = res.body.data;
+    //                 index_book.setIndexItem(res.body.data);
+    //                 let onlyMonth = {};
+    //                 res.body.data.forEach((item, index) => {
+    //                     // console.log(item)
+    //                     let month = moment(item.happen_at).format('M' + '月')
+    //                     item.happen_atF = moment(item.happen_at).format("MM-DD HH:mm")
+    //                     if (!onlyMonth[month]) {
+    //                         onlyMonth[month] = [];
+    //                     }
+    //                     onlyMonth[month].push(item)
+    //                 })
+    //                 vm.allItem = onlyMonth;
+    //                 vm.$vux.loading.hide()
+    //             })
+    //         }
+    //     }, err => {
+    //         next(vm => {
+    //             vm.$vux.loading.hide()
+    //         })
+    //     })
+    // },
     methods: {
         del: function (itemId) {
             const _this = this
@@ -96,11 +96,11 @@ export default {
                         _this.$vux.loading.hide();
                         if (res.status === 200 && res.body.error_code === 0) {
                             _this.$vux.toast.show({
-                            text: '删除成功',
-                            type: 'success',
-                            time: 2000
+                                text: '删除成功',
+                                type: 'success',
+                                time: 2000
                             })
-                            _this.$router.push({ path: '/allbookitems'})
+                            _this.$router.push({ path: '/allbookitems' })
                         }
                     })
                 }
@@ -108,11 +108,11 @@ export default {
         },
         edit: function (itemToEdit) {
             console.log(itemToEdit.type)
-            this.$router.push({ path: '/editbookitem', query: { isEdit: true, itemId: itemToEdit._id, content: itemToEdit.content, tag: itemToEdit.tag, type: itemToEdit.type, happen_at: itemToEdit.happen_at, charge:itemToEdit.charge } })
+            this.$router.push({ path: '/editbookitem', query: { isEdit: true, itemId: itemToEdit._id, content: itemToEdit.content, tag: itemToEdit.tag, type: itemToEdit.type, happen_at: itemToEdit.happen_at, charge: itemToEdit.charge } })
         },
         Fback: function () {
             console.log("返回")
-            this.$router.push({ path:'/pending' })
+            this.$router.push({ path: '/pending' })
         }
     },
     components: {
@@ -123,9 +123,35 @@ export default {
         XButton
     },
     mounted: function () {
-        console.log("进入了")
         this.$vux.loading.show({
             text: '加载中'
+        })
+        resource.getAllBookItems({
+            bookId: index_book.id,
+            pageIndex: 1,
+            pageSize: 100
+        }).then(res => {
+            if (res.status === 200 && res.body.error_code === 0) {
+                let intemStorge = res.body.data;
+                let onlyMonth = {};
+                res.body.data.forEach((item, index) => {
+                    let month = moment(item.happen_at).format('M' + '月')
+                    item.happen_atF = moment(item.happen_at).format("MM-DD HH:mm")
+                    if (!onlyMonth[month]) {
+                        onlyMonth[month] = [];
+                    }
+                    onlyMonth[month].push(item)
+                })
+                index_book.book_item = []
+                intemStorge.forEach((item, index) => {
+                    if (index < 4) {
+                        item.happen_at = moment(item.happen_at).format("MM-DD HH:mm")
+                        index_book.book_item.push(item)
+                    }
+                })
+                this.allItem = onlyMonth;
+                this.$vux.loading.hide()
+            }
         })
     }
 }

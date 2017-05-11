@@ -40,44 +40,6 @@ export default {
     SwiperItem,
     Qrcode
   },
-  beforeRouteEnter(to, from, next) {
-    var listData = []
-    var itemData = {}
-    if (to.query.id) {
-      resource.onePublicedBook({
-        bookId: to.query.id
-      }).then(res => {
-        if (res.status === 200 && res.body.error_code === 0) {
-          itemData.title = res.body.data.bookTitle
-          itemData.bookId = res.body.data._id
-          itemData.showUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + item.picUrl
-          itemData.evidenceId = res.body.data.evidenceId
-          itemData.dbHash = res.body.data.dbHash
-          itemData.bcHash = res.body.data.bcHash
-        }
-        listData.push(itemData)
-      })
-    } else {
-      resource.getPublicedBooks().then(res => {
-        if (res.status === 200 && res.body.error_code === 0) {
-          res.body.data.forEach(item => {
-            itemData.title = item.bookTitle
-            itemData.picUrl = item.picUrl
-            itemData.bookId = item._id
-            itemData.showUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + item.picUrl
-            itemData.evidenceId = item.evidenceId
-            itemData.dbHash = item.dbHash
-            itemData.bcHash = item.bcHash
-            listData.push(itemData)
-          })
-        }
-      })
-    }
-    next(vm => {
-      vm.list = listData
-      vm.$vux.loading.hide()
-    })
-  },
   data() {
     return {
       height: '',
@@ -114,7 +76,41 @@ export default {
     this.height = (result.pageHeight - 54);
     this.contentH = this.height * 0.58;
     this.qrValue = window.location.href;
-    this.$vux.loading.hide();
+
+    var listData = []
+    var itemData = {}
+    if (this.$route.query.id) {
+      resource.onePublicedBook({
+        bookId: this.$route.query.id
+      }).then(res => {
+        if (res.status === 200 && res.body.error_code === 0) {
+          itemData.title = res.body.data.bookTitle
+          itemData.bookId = res.body.data._id
+          itemData.showUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + item.picUrl
+          itemData.evidenceId = res.body.data.evidenceId
+          itemData.dbHash = res.body.data.dbHash
+          itemData.bcHash = res.body.data.bcHash
+        }
+        listData.push(itemData)
+      })
+    } else {
+      resource.getPublicedBooks().then(res => {
+        if (res.status === 200 && res.body.error_code === 0) {
+          res.body.data.forEach(item => {
+            itemData.title = item.bookTitle
+            itemData.picUrl = item.picUrl
+            itemData.bookId = item._id
+            itemData.showUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + item.picUrl
+            itemData.evidenceId = item.evidenceId
+            itemData.dbHash = item.dbHash
+            itemData.bcHash = item.bcHash
+            listData.push(itemData)
+          })
+        }
+        this.$vux.loading.hide();
+      })
+    }
+    this.list = listData
   }
 }
 </script>
