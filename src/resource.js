@@ -110,6 +110,14 @@ const actions = {
   onePublicedBook: {
     method: 'GET',
     url: 'Books/onePublicedBook'
+  },
+  cancelPublic: {
+    method: 'GET',
+    url: 'toBlock/cancel'
+  },
+  checkBdHash: {
+    method: 'GET',
+    url: 'toBlock/check'
   }
 }
 const resource = Vue.resource('', {}, actions)

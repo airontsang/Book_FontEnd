@@ -1,47 +1,67 @@
 <template>
   <div>
-    <div class="head-box" :style="{ height: height*0.4 + 'px'}">
-      <div class="text-box">
-        <h2>13届布吉中心小学聚会</h2>
-        <label :style="{ 'margin-top': (height)*0.035 + 'px'}">凭证ID</label>
-        <div>bubiV8i4erwKob5Cj9zVSQbXBtSRApV8nphs955g</div>
+    <div v-if="hasData">
+      <div class="head-box" :style="{ height: height*0.4 + 'px'}">
+        <div class="text-box">
+          <h2>13届布吉中心小学聚会</h2>
+          <label :style="{ 'margin-top': (height)*0.035 + 'px'}">凭证ID</label>
+          <div>bubiV8i4erwKob5Cj9zVSQbXBtSRApV8nphs955g</div>
+        </div>
+        <img src="static/default.jpg">
+        <div class="loom"></div>
       </div>
-      <img src="static/default.jpg">
-      <div class="loom"></div>
-    </div>
-    <div class="bottom-box" :style="{ height: height*0.6 + 'px'}">
-    </div>
-    <div class="black" :style="{ 'top': (height)*0.32 + 'px'}">
-      <swiper :height="contentH + 'px'" dots-position="center">
-        <swiper-item class="black" v-for="item in list" :key="item.bookId">
-          <div @click="goDetails(item.bookId)" class="content-box" :style="{ height: contentH + 'px', width: (contentH)*0.8 + 'px'}">
-            <label><img src="../../assets/pic/more.svg"></label>
-            <p class="hash-title" :style="{ 'margin-top': (height)*0.07 + 'px'}">账本数据哈希值</p>
-            <p class="dbhash">e3a7e990ad82bf0bb9bc39550772b68202f509ab</p>
-            <div class="qr-box">
-              <!--:style="{ 'margin-top': (height)*0.25 + 'px'}"-->
-              <qrcode :value="qrValue" type="img"></qrcode>
+      <div class="bottom-box" :style="{ height: height*0.6 + 'px'}">
+      </div>
+      <div class="black" :style="{ 'top': (height)*0.32 + 'px'}">
+        <swiper :height="contentH + 'px'" dots-position="center">
+          <swiper-item class="black" v-for="item in list" :key="item.bookId">
+            <div class="content-box" :style="{ height: contentH + 'px', width: (contentH)*0.8 + 'px'}">
+              <label @click="showMenus = true"><img src="../../assets/pic/more.svg"></label>
+              <div @click="goDetails(item.bookId)">
+                <p class="hash-title" :style="{ 'margin-top': (height)*0.07 + 'px'}">账本数据哈希值</p>
+                <p class="dbhash">e3a7e990ad82bf0bb9bc39550772b68202f509ab</p>
+                <div class="qr-box">
+                  <!--:style="{ 'margin-top': (height)*0.25 + 'px'}"-->
+                  <qrcode :value="qrValue" type="img"></qrcode>
+                </div>
+              </div>
             </div>
-          </div>
-        </swiper-item>
-      </swiper>
+          </swiper-item>
+        </swiper>
+      </div>
+      <div v-transfer-dom>
+        <actionsheet :menus="menus" v-model="showMenus" @on-click-menu="proof" show-cancel></actionsheet>
+      </div>
+    </div>
+    <div v-else>
+      <divider>没有数据</divider>
     </div>
   </div>
 </template>
 
 <script>
-import { Swiper, SwiperItem, Qrcode } from 'vux'
+import { Swiper, SwiperItem, Qrcode, TransferDom, Actionsheet, Divider } from 'vux'
 import resource from '../../resource.js'
 import Vue from "vue"
 
 export default {
+  directives: {
+    TransferDom
+  },
   components: {
     Swiper,
+    Divider,
     SwiperItem,
+    Actionsheet,
     Qrcode
   },
   data() {
     return {
+      hasData: false,
+      menus: {
+        menu1: '数据验证',
+      },
+      showMenus: false,
       height: '',
       contentH: '',
       qrValue: '',
@@ -69,6 +89,9 @@ export default {
     },
     goDetails: function (bookId) {
       this.$router.push({ path: "/publicedbookdetails", query: { bookId: bookId } })
+    },
+    proof: function () {
+      console.log("hello")
     }
   },
   mounted: function () {
@@ -95,7 +118,7 @@ export default {
       })
     } else {
       resource.getPublicedBooks().then(res => {
-        if (res.status === 200 && res.body.error_code === 0) {
+        if (res.status === 200 && res.body.error_code === 0 && res.body.data.length !== 0) {
           res.body.data.forEach(item => {
             itemData.title = item.bookTitle
             itemData.picUrl = item.picUrl
@@ -106,6 +129,7 @@ export default {
             itemData.bcHash = item.bcHash
             listData.push(itemData)
           })
+          this.hasData = true;
         }
         this.$vux.loading.hide();
       })

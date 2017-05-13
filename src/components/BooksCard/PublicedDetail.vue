@@ -17,7 +17,7 @@
             </ul>
         </div>
         <div v-transfer-dom>
-            <actionsheet :menus="menus" v-model="showMenus" show-cancel></actionsheet>
+            <actionsheet :menus="menus" v-model="showMenus" @on-click-menu="cancelPublic" show-cancel></actionsheet>
         </div>
     </div>
 </template>
@@ -25,7 +25,7 @@
 <script>
 import { XHeader, Actionsheet, TransferDom, FormPreview } from 'vux'
 import { Group, XInput, XTextarea } from 'vux'
-import { set_book_info, get_book_info } from '../../state.js'
+import { index_book } from '../../state.js'
 import moment from "moment"
 import resource from '../../resource.js'
 export default {
@@ -81,15 +81,7 @@ export default {
             showMenus: false
         }
     },
-    computed: {
-    },
     methods: {
-        back: function () {
-            alert("back")
-        },
-        submit: function () {
-            alert("submit")
-        },
         getBookInfo: function () {
             resource.onePublicedBook({
                 bookId: this.$route.query.bookId
@@ -154,6 +146,25 @@ export default {
                 this.$vux.loading.hide()
             })
         },
+        cancelPublic: function () {
+            this.$vux.loading.show({
+                text: '操作中'
+            })
+            resource.cancelPublic({
+                bookId: this.$route.query.bookId
+            }).then(res => {
+                if (res.status === 200 && res.body.error_code === 0) {
+                    this.$vux.loading.hide()
+                    this.$vux.toast.show({
+                        text: '请重新公示以或得数据保障',
+                        type: 'success',
+                        time: 2000
+                    })
+                    index_book.reset()
+                    this.$router.push({ path:'/pending' })
+                }
+            })
+        }
 
     },
     mounted: function () {
@@ -174,44 +185,44 @@ export default {
 
 <style scoped lang="less">
 @import '~vux/src/styles/1px.less';
-.item-box{
+.item-box {
     margin-top: 10px;
 }
 
 .item-cell {
-  padding: 10px;
-  display: flex;
-  background: #fff;
-  align-items: center;
+    padding: 10px;
+    display: flex;
+    background: #fff;
+    align-items: center;
 }
 
 .item-all {
-  .all-box {
-    width: 70%;
-  }
-  .all-text {
-    width: 25%;
-    color: #999;
-    text-align: right;
-    margin-right: 10px;
-  }
-  .arrow-box {
-    width: 5%;
-  }
+    .all-box {
+        width: 70%;
+    }
+    .all-text {
+        width: 25%;
+        color: #999;
+        text-align: right;
+        margin-right: 10px;
+    }
+    .arrow-box {
+        width: 5%;
+    }
 }
 
 .item-left {
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-  .two-info {
-    font-size: .6em;
-    color: #999;
-  }
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    .two-info {
+        font-size: .6em;
+        color: #999;
+    }
 }
 
 .item-right {
-  width: 20%;
-  text-align: right;
+    width: 20%;
+    text-align: right;
 }
 </style>

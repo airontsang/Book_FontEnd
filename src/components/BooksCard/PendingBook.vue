@@ -24,7 +24,7 @@
       <x-button @click.native="add_item" type="primary" action-type="button">记一笔</x-button>
     </div>
     <div class="item-box">
-      <ul>
+      <ul :class="{disabled:!hasBookItem}">
         <router-link to="/allbookitems">
           <li class="item-all item-cell vux-1px-b">
             <div class="all-box">明细</div>
@@ -34,7 +34,8 @@
             </div>
           </li>
         </router-link>
-        <li class="item-cell vux-1px-b" v-for="item in book.book_item">
+        <div v-if="hasBookItem">
+          <li class="item-cell vux-1px-b" v-for="item in book.book_item">
           <div class="item-left">
             <div class="item-tag">{{ item.tag }}</div>
             <div class="two-info">
@@ -44,6 +45,10 @@
           </div>
           <div class="item-right">￥{{ item.charge }}</div>
         </li>
+        </div>
+        <div v-else>
+          <divider>没有账目</divider>
+        </div>
       </ul>
       <x-button @click.native="toPublic" type="primary" action-type="button">公示</x-button>
     </div>
@@ -52,12 +57,13 @@
 
 <script>
 import resource from '@/resource.js'
-import { Group, XButton, Cell, CellBox } from 'vux'
+import { Group, XButton, Cell, CellBox, Divider } from 'vux'
 import moment from 'moment'
 import { index_book } from '../../state.js'
 export default {
   data() {
     return {
+      hasBookItem: false,
       book: {},
     }
   },
@@ -89,7 +95,6 @@ export default {
       }).then(res => {
         if (res.status === 200 && res.body.error_code === 0) {
           if (res.body.data.length == 0) {
-            console.log("长度为0")
             index_book.book_item = []
           } else {
             res.body.data.forEach((item, index) => {
@@ -99,6 +104,8 @@ export default {
               }
             })
             this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
+            console.log(res.body.data)
+            this.hasBookItem = true
             this.$vux.loading.hide()
           }
         }
@@ -110,22 +117,26 @@ export default {
     } else if (index_book.id) {
       this.$vux.loading.hide()
       this.book = index_book
+      if(this.book.book_item.length != 0) {
+          this.hasBookItem = true;
+      }
     } else {
       resource.getIndexBook().then(res => {
         if (res.status === 200 && res.body.error_code === 0) {
+          if( res.body.data.bookItems.length !== 0) {
+            this.hasBookItem = true;
+          } 
           index_book.set(res.body.data.info, res.body.data.bookItems);
           this.book = index_book;
           this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
           this.$vux.loading.hide()
         } else if (res.status === 200 && res.body.error_code === 1006) {
-          next(vm => {
-            this.$vux.loading.hide()
-            this.$router.push({ path: 'login' })
-            this.$vux.toast.show({
-              text: '登录过期',
-              type: 'warn',
-              time: 2000
-            })
+          this.$vux.loading.hide()
+          this.$router.push({ path: 'login' })
+          this.$vux.toast.show({
+            text: '登录过期',
+            type: 'warn',
+            time: 2000
           })
         }
       }, err => {
@@ -137,6 +148,7 @@ export default {
     Group,
     Cell,
     CellBox,
+    Divider,
     XButton
   }
 }
@@ -247,5 +259,11 @@ export default {
 .item-right {
   width: 20%;
   text-align: right;
+}
+
+.disabled {
+pointer-events: none;
+cursor: default;
+opacity: 0.6;
 }
 </style>

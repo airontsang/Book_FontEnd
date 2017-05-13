@@ -36,7 +36,7 @@ export default {
   },
   data() {
     return {
-      index0: true,
+      index0: false,
       index1: false,
       index2: false
     }
@@ -57,6 +57,15 @@ export default {
         this.index2 = true;
       }
     }
+  },
+  mounted: function () {
+    if (this.$route.name == "pending") {
+        this.index0 = true;
+      } else if (this.$route.name == "publiced") {
+        this.index1 = true;
+      } else {
+        this.index2 = true;
+      }
   }
 }
 

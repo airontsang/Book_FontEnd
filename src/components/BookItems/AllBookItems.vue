@@ -100,9 +100,40 @@ export default {
                                 type: 'success',
                                 time: 2000
                             })
-                            _this.$router.push({ path: '/allbookitems' })
+                            // _this.$router.push({ path: '/allbookitems' })
+                            _this.allItem = {}
+                            _this.fetchData()
                         }
                     })
+                }
+            })
+        },
+        fetchData: function () {
+            resource.getAllBookItems({
+                bookId: index_book.id,
+                pageIndex: 1,
+                pageSize: 100
+            }).then(res => {
+                if (res.status === 200 && res.body.error_code === 0) {
+                    let intemStorge = res.body.data;
+                    let onlyMonth = {};
+                    res.body.data.forEach((item, index) => {
+                        let month = moment(item.happen_at).format('M' + '月')
+                        item.happen_atF = moment(item.happen_at).format("MM-DD HH:mm")
+                        if (!onlyMonth[month]) {
+                            onlyMonth[month] = [];
+                        }
+                        onlyMonth[month].push(item)
+                    })
+                    index_book.book_item = []
+                    intemStorge.forEach((item, index) => {
+                        if (index < 4) {
+                            item.happen_at = moment(item.happen_at).format("MM-DD HH:mm")
+                            index_book.book_item.push(item)
+                        }
+                    })
+                    this.allItem = onlyMonth;
+                    this.$vux.loading.hide()
                 }
             })
         },
@@ -126,33 +157,7 @@ export default {
         this.$vux.loading.show({
             text: '加载中'
         })
-        resource.getAllBookItems({
-            bookId: index_book.id,
-            pageIndex: 1,
-            pageSize: 100
-        }).then(res => {
-            if (res.status === 200 && res.body.error_code === 0) {
-                let intemStorge = res.body.data;
-                let onlyMonth = {};
-                res.body.data.forEach((item, index) => {
-                    let month = moment(item.happen_at).format('M' + '月')
-                    item.happen_atF = moment(item.happen_at).format("MM-DD HH:mm")
-                    if (!onlyMonth[month]) {
-                        onlyMonth[month] = [];
-                    }
-                    onlyMonth[month].push(item)
-                })
-                index_book.book_item = []
-                intemStorge.forEach((item, index) => {
-                    if (index < 4) {
-                        item.happen_at = moment(item.happen_at).format("MM-DD HH:mm")
-                        index_book.book_item.push(item)
-                    }
-                })
-                this.allItem = onlyMonth;
-                this.$vux.loading.hide()
-            }
-        })
+        this.fetchData()
     }
 }
 
