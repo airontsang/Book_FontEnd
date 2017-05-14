@@ -10,6 +10,7 @@ import EditBookItem from '@/components/BookItems/EditBookItem'
 import PublicedDetail from '@/components/BooksCard/PublicedDetail'
 import EditBook from '@/components/BooksCard/EditBook'
 import Login from '@/components/User/Login.vue'
+import Reg from '@/components/User/Reg.vue'
 
 import { index_book } from '../state'
 Vue.use(Router)
@@ -50,6 +51,10 @@ var router = new Router({
       name: 'unsure',
       component: UnsureBooks
     }]
+  }, {
+    path: '/reg',
+    name: 'reg',
+    component: Reg
   }, {
     path: '/login',
     name: 'login',

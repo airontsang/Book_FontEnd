@@ -17,7 +17,7 @@ export default {
 @import '~vux/src/styles/1px.less';
 
 body {
-  background-color: #fbf9fe;
+  background-color: rgba(0, 0, 0, .1);
 }
 
 .fade-enter-active, .fade-leave-active {
