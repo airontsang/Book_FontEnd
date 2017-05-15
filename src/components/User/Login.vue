@@ -11,10 +11,10 @@
       <h3>聚会帐-可信赖</h3>
     </div>
     <div class="login-box">
-      <group title="">
+      <div class="login-box">
         <x-input title="手机" :value="LoginId" name="mobile" placeholder="请输入手机号码" keyboard="number" is-type="china-mobile"></x-input>
         <x-input title="密码" :value="passWord" type="password"></x-input>
-      </group>
+      </div>
       <div style="padding:15px;">
         <x-button @click.native="login()" type="primary" action-type="button">登录</x-button>
       </div>
@@ -111,21 +111,24 @@ h3 {
   margin-top: 60px;
 }
 
-.weui-cells {
-  background: transparent;
+.login-box {
+  color: rgba(255, 255, 255, .6);  
+}
+.weui-cellss {
+  background: transparent !important;
   color: rgba(255, 255, 255, .6);
 }
 
 .weui-cells:before {
-  border-top: none;
+  border-top: none !important;
 }
 
 .weui-cell:before {
-  border-top: none;
+  border-top: none !important;
 }
 
 .weui-cells:after {
-  border-bottom: none;
+  border-bottom: none !important;
 }
 
 .reg-text {

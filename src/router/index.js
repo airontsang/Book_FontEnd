@@ -28,9 +28,9 @@ var router = new Router({
       if (localStorage.token) {
         next();
       } else {
-        console.log("没有token, 调到none")
+        console.log("没有token, 调到登录")
         next({
-          path: '/none'
+          path: '/login'
         })
       }
     }),

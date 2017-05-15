@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-header @back="Fback" @submit="Fsubmit" @typeChanged="typeCome" :is-tabbar=true :isClick=true :isSubmit=true :tellType="type"></b-header>
+    <b-header @back="Fback" @submit="Fsubmit" @typeChanged="typeCome" :is-tabbar=true :isClick="canSubmit" :isSubmit=true :tellType="type"></b-header>
     <div class="text-box">
       <div class="input-box vux-1px-b">
         <div class="label-box">
@@ -8,7 +8,7 @@
           <br>
           <span>人民币</span>
         </div>
-        <input type="number" v-model="charge">
+        <input type="number" v-model="charge" @on-focus="onFocus" :is-type="float">
       </div>
       <div class="tag-box vux-1px-b" v-show="!type">
         <label :class="{ selected :tag.selected }" v-for="(tag, index) in tags" @click="selectTag(index)">{{ tag.name }}</label>
@@ -72,10 +72,30 @@ export default {
       timeToDb: '',
     }
   },
+  computed: {
+    canSubmit: function () {
+      if (this.charge !== '' && !this.float.valid && this.charge == 0) {
+        return true
+      }
+      return false
+    }
+  },
   methods: {
     Fback: function () {
       // this.$router.push({ path: this.backLocation })
       this.$router.back()
+    },
+    count: function () {
+
+    },
+    onFocus: function () {
+      this.charge = ''
+    },
+    float: function (value) {
+      return {
+        valid: value.toString().split(".")[1].length > 1,
+        msg: "精确到小数点后一位"
+      }
     },
     Fsubmit: function () {
       this.$vux.loading.show({
@@ -86,7 +106,6 @@ export default {
       } else {
         this.submitAdd();
       }
-
     },
     submitEdit: function () {
       resource.editBookItem({}, {
@@ -99,6 +118,7 @@ export default {
         happen_at: this.timeToDb
       }).then(res => {
         if (res.status === 200 && res.body.error_code === 0) {
+          index_book.count(this.type, this.charge)
           this.$vux.loading.hide();
           this.$router.replace({ path: '/allbookitems' });
           this.$vux.toast.show({
@@ -127,6 +147,7 @@ export default {
           goodItem.happen_at = moment(this.happen_at).format('MM-DD HH:mm');
           index_book.newItem(goodItem);
           this.$vux.loading.hide()
+          index_book.count(this.type, this.charge)
           this.$vux.toast.show({
             text: '添加成功',
             time: 2000

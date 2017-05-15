@@ -55,6 +55,10 @@ const actions = {
     method: 'GET',
     url: 'User/Login?'
   },
+  reg: {
+    method: 'POST',
+    url: 'User/reg'
+  },
   getIndexBook: {
     method: 'GET',
     url: 'Books/getIndexBook'

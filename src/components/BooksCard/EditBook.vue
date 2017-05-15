@@ -17,8 +17,8 @@
     
             <div class="upload-box">
                 <a href="javascript:;" class="file" :class="{ pickedUpload: picIsOk, isClicked: isClick  }">{{ butText }}
-                                <input type="file" name="images" id="imageBut">    
-                            </a>
+                                    <input type="file" name="images" id="imageBut">    
+                                </a>
                 <button @click="uploadPic" class="upload-but" :class="{ pickedBut: picIsOk }">上传</button>
             </div>
         </div>
@@ -41,7 +41,7 @@ export default {
             picIsOk: false,
             isClick: false,
             butText: "选择图片",
-            canSubmit: true,
+            picOK: true,
             switchValue: true,
             switchTitle: "背景图片(不做选择即使用默认)",
             value: [],
@@ -81,7 +81,7 @@ export default {
                 partyTime: this.timeToDb
             }).then(res => {
                 if (res.status === 200 && res.body.error_code === 0) {
-                    
+
                     this.$vux.toast.show({
                         text: '添加成功',
                         type: 'success',
@@ -149,7 +149,7 @@ export default {
                     this.picIsOk = false;
                     this.isClick = true;
                     this.butText = "已上传"
-                    this.canSubmit = true;
+                    this.picOK = true;
                 }
             }, err => {
                 console.log(err)
@@ -188,7 +188,7 @@ export default {
                             reader.readAsDataURL(file)
                             reader.onloadend = function (e) {
                                 _this.picUrl = e.target.result;
-                                _this.canSubmit = false;
+                                _this.picOK = false;
                             };
                             _this.lastFile = file;
                             _this.picIsOk = true;
@@ -233,6 +233,12 @@ export default {
         }
     },
     computed: {
+        canSubmit: function () {
+            if (this.picOk && this.bookTitle !== '' && this.place !== '') {
+                return true
+            }
+            return false
+        }
     },
     mounted: function () {
         if (this.$route.query.isEdit) {

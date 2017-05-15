@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div>
+        <div v-if="hasBook">
             <div class="head-box" :style="{ height: height*0.4 + 'px'}">
                 <div class="text-box">
                     <h2 :style="{ 'margin-top': (height)*0.21 + 'px'}">{{ book.title }}</h2>
@@ -32,15 +32,15 @@
                 <div class="count-box" :style="{ height: height*0.1 + 'px'}">
                     <div class="count-item">
                         <label>总额</label>
-                        <label>￥880</label>
+                        <label>￥{{ book.sum }}</label>
                     </div>
                     <div class="count-item">
                         <label>余额</label>
-                        <label>￥880</label>
+                        <label>￥{{ book.balance }}</label>
                     </div>
                     <div class="count-item">
                         <label>支出</label>
-                        <label>￥880</label>
+                        <label>￥{{ book.spend }}</label>
                     </div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
                                     <span class="item-content">{{ item.content }}</span>
                                 </div>
                             </div>
-                            <div class="item-right">￥{{ item.charge }}</div>
+                            <div class="item-right" :class="{ income: item.type }">￥{{ item.charge }}</div>
                         </li>
                     </div>
                     <div v-else>
@@ -74,6 +74,12 @@
                 <div class="but-item">
                     <x-button @click.native="add_item" type="primary" action-type="button">记一笔</x-button>
                 </div>
+            </div>
+        </div>
+        <div v-else>
+            <divider>没有数据</divider>
+            <div class="but-item">
+                <x-button @click.native="add_item" type="primary" action-type="button">添加一个账本</x-button>
             </div>
         </div>
         <button class="publiced-but">
@@ -95,6 +101,7 @@ export default {
     },
     data() {
         return {
+            hasBook: false,
             hasBookItem: true,
             height: '',
             contentH: '',
@@ -134,6 +141,9 @@ export default {
                     this.$router.push({ path: "/publiced" })
                 }
             })
+        },
+        addBook: function () {
+            this.$router.push({ path: '/editbook', query:{ isEdit: false } })
         },
         getAllBookItems: function () {
             resource.getAllBookItems({
@@ -335,6 +345,10 @@ export default {
     align-items: center;
 }
 
+.income {
+    color: @base-red;
+}
+
 .item-all {
     .all-box {
         width: 70%;
@@ -387,8 +401,8 @@ export default {
     position: fixed;
     display: flex;
     align-content: center;
-    right: 10%;
-    bottom: 8%;
+    right: 7%;
+    bottom: 11%;
     background: @base-green;
     border-radius: 50%;
     border: none;

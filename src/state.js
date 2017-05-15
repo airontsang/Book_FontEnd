@@ -58,6 +58,38 @@ index_book.newItem = function (newItem) {
   this.book_item.unshift(newItem);
 }
 
+// index_book.count = function () {
+//   var countSheet = {}
+//   var curSum = 0
+//   var curSpend = 0
+//   if( this.book_item.length == 0 ){
+//     countSheet.sum = 0
+//     countSheet.spend = 0
+//     countSheet.balance = 0
+//   } else {
+//     this.book_item.forEach( item => {
+//       if( item.type == 0 ){
+//         curSpend =+ item.charge 
+//       } else {
+//         curSum =+ item.charge
+//       }
+//     })
+//     coutSheet.sum = curSum
+//     coutSheet.spend = curSpend
+//     coutSheet.balance = curSum - curSpend
+//   }
+//   return countSheet
+// }
+index_book.count = function( type, charge ){
+  if( type == 1 ){
+    this.sum += Number(charge)
+    this.balance += Number(charge)
+  } else {
+    this.spend += Number(charge)
+    this.balance -= Number(charge)
+  }
+}
+
 index_book.setIndexItem = function (allItem) {
   this.book_item = []
   if (allItem.length = 0) {
@@ -73,8 +105,3 @@ index_book.setIndexItem = function (allItem) {
 export {
   index_book
 }
-
-// <div class="time-box" @click="test">
-//                 <img src="../../assets/pic/time.svg"></img>
-//                 <span>{{ time }}</span>
-//             </div>
