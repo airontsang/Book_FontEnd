@@ -3,26 +3,26 @@
     <div v-if="hasData">
       <div class="head-box" :style="{ height: height*0.4 + 'px'}">
         <div class="text-box">
-          <h2>13届布吉中心小学聚会</h2>
+          <h2>{{ oneBook.title }}</h2>
           <label :style="{ 'margin-top': (height)*0.035 + 'px'}">凭证ID</label>
-          <div>bubiV8i4erwKob5Cj9zVSQbXBtSRApV8nphs955g</div>
+          <div>{{ oneBook.evidenceId }}</div>
         </div>
-        <img src="static/default.jpg">
+        <img :src="oneBook.showUrl">
         <div class="loom"></div>
       </div>
       <div class="bottom-box" :style="{ height: height*0.6 + 'px'}">
       </div>
       <div class="black" :style="{ 'top': (height)*0.32 + 'px'}">
-        <swiper :height="contentH + 'px'" dots-position="center">
+        <swiper :height="contentH + 'px'" @on-index-change="moveItem" dots-position="center">
           <swiper-item class="black" v-for="item in list" :key="item.bookId">
             <div class="content-box" :style="{ height: contentH + 'px', width: (contentH)*0.8 + 'px'}">
               <label @click="showMenus = true"><img src="../../assets/pic/more.svg"></label>
               <div @click="goDetails(item.bookId)">
                 <p class="hash-title" :style="{ 'margin-top': (height)*0.07 + 'px'}">账本数据哈希值</p>
-                <p class="dbhash">e3a7e990ad82bf0bb9bc39550772b68202f509ab</p>
+                <p class="dbhash">{{ item.dbHash }}</p>
                 <div class="qr-box">
                   <!--:style="{ 'margin-top': (height)*0.25 + 'px'}"-->
-                  <qrcode :value="qrValue" type="img"></qrcode>
+                  <qrcode :value="item.qrValue" type="img"></qrcode>
                 </div>
               </div>
             </div>
@@ -32,6 +32,17 @@
       <div v-transfer-dom>
         <actionsheet :menus="menus" v-model="showMenus" @on-click-menu="proof" show-cancel></actionsheet>
       </div>
+      <div v-transfer-dom>
+        <x-dialog v-model="showHideOnBlur" class="dialog-demo" hide-on-blur>
+          <div class="img-box">
+            <p>{{ checkDbHash1 }}</p>
+            <p>{{ checkDbHash2 }}</p>              
+          </div>
+          <div @click="showHideOnBlur=false">
+            <span class="vux-close"></span>
+          </div>
+        </x-dialog>
+      </div>
     </div>
     <div v-else>
       <divider>没有数据</divider>
@@ -40,7 +51,7 @@
 </template>
 
 <script>
-import { Swiper, SwiperItem, Qrcode, TransferDom, Actionsheet, Divider } from 'vux'
+import { Swiper, SwiperItem, Qrcode, TransferDom, Actionsheet, Divider, XDialog } from 'vux'
 import resource from '../../resource.js'
 import Vue from "vue"
 
@@ -51,6 +62,7 @@ export default {
   components: {
     Swiper,
     Divider,
+    XDialog,
     SwiperItem,
     Actionsheet,
     Qrcode
@@ -62,10 +74,13 @@ export default {
         menu1: '数据验证',
       },
       showMenus: false,
+      showHideOnBlur: false,
       height: '',
       contentH: '',
-      qrValue: '',
-      list: []
+      list: [],
+      oneBook: {},
+      checkDbHash1: "",
+      checkDbHash2: ""
     }
   },
   methods: {
@@ -91,15 +106,36 @@ export default {
       this.$router.push({ path: "/publicedbookdetails", query: { bookId: bookId } })
     },
     proof: function () {
-      console.log("hello")
+      this.$vux.loading.show({
+        text: "请等待"
+      })
+      resource.checkBdHash({
+        bookId: this.oneBook.bookId,
+        evidenceId: this.oneBook.evidenceId,
+        bcHash: this.oneBook.bcHash
+      }).then(res => {
+        this.$vux.loading.hide()
+        if (res.status === 200 && res.body.error_code === 0) {
+          this.showHideOnBlur = true
+          this.checkDbHash1 = res.body.data.dbHash
+          this.checkDbHash2 = res.body.data.bcMeta
+        } else if (res.body.error_code === 1018) {
+          this.$vux.toast.show({
+            text: '网络开小差',
+            type: 'warn',
+            time: 2000
+          })
+        }
+      })
+    },
+    moveItem: function (index) {
+      this.oneBook = this.list[index]
     }
   },
   mounted: function () {
     let result = this.getBrowserInterfaceSize()
     this.height = (result.pageHeight - 54);
     this.contentH = this.height * 0.58;
-    this.qrValue = window.location.href;
-
     var listData = []
     var itemData = {}
     if (this.$route.query.id) {
@@ -110,25 +146,35 @@ export default {
           itemData.title = res.body.data.bookTitle
           itemData.bookId = res.body.data._id
           itemData.showUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + item.picUrl
+          itemData.qrValue = Vue.http.options.root + '/#/publiced/id?' + res.body.data._id;
           itemData.evidenceId = res.body.data.evidenceId
           itemData.dbHash = res.body.data.dbHash
           itemData.bcHash = res.body.data.bcHash
         }
         listData.push(itemData)
+        this.oneBook = itemData
       })
     } else {
       resource.getPublicedBooks().then(res => {
         if (res.status === 200 && res.body.error_code === 0 && res.body.data.length !== 0) {
           res.body.data.forEach(item => {
-            itemData.title = item.bookTitle
+            itemData.title = item.title
             itemData.picUrl = item.picUrl
             itemData.bookId = item._id
-            itemData.showUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + item.picUrl
+            if (item.picUrl == 'default.jpg') {
+              itemData.showUrl = 'static/default.jpg'
+            } else {
+              itemData.showUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + item.picUrl
+            }
+            itemData.qrValue = Vue.http.options.root + '/#/publiced?id=' + item._id;
             itemData.evidenceId = item.evidenceId
             itemData.dbHash = item.dbHash
             itemData.bcHash = item.bcHash
             listData.push(itemData)
+            itemData = {}
           })
+          this.list = listData;
+          this.oneBook = listData[0]
           this.hasData = true;
         }
         this.$vux.loading.hide();
@@ -236,6 +282,21 @@ export default {
 
 .vux-indicator.custom-bottom {
   bottom: 30px;
+}
+
+.dialog-demo {
+  .weui-dialog{
+    border-radius: 8px;
+    padding-bottom: 8px;
+  }
+  .dialog-title {
+    line-height: 30px;
+    color: #666;
+  }
+  .vux-close {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
 }
 
 @-webkit-keyframes fadeInUp {

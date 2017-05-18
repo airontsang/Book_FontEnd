@@ -17,8 +17,8 @@
     
             <div class="upload-box">
                 <a href="javascript:;" class="file" :class="{ pickedUpload: picIsOk, isClicked: isClick  }">{{ butText }}
-                                    <input type="file" name="images" id="imageBut">    
-                                </a>
+                    <input accept="image/*" type="file" name="images" id="imageBut">    
+                </a>
                 <button @click="uploadPic" class="upload-but" :class="{ pickedBut: picIsOk }">上传</button>
             </div>
         </div>
@@ -160,6 +160,7 @@ export default {
             if (input.addEventListener) {
                 var _this = this;
                 input.addEventListener("change", function (evt) {
+                    console.log("改变了啊")
                     var i = 0,
                         len = this.files.length,
                         img, reader, file;
@@ -188,7 +189,7 @@ export default {
                             reader.readAsDataURL(file)
                             reader.onloadend = function (e) {
                                 _this.picUrl = e.target.result;
-                                _this.picOK = false;
+                                _this.picOK = false;    //选了不上传的情况
                             };
                             _this.lastFile = file;
                             _this.picIsOk = true;
@@ -198,6 +199,8 @@ export default {
                     }
 
                 })
+            } else {
+                console.log("怎么会没有图片")
             }
         },
         delBook: function () {
@@ -234,15 +237,19 @@ export default {
     },
     computed: {
         canSubmit: function () {
-            if (this.picOk && this.bookTitle !== '' && this.place !== '') {
+            if (this.picOK && this.bookTitle !== '' && this.place !== '') {
                 return true
+            } else {
+                return false
+
             }
-            return false
         }
     },
     mounted: function () {
         if (this.$route.query.isEdit) {
-            if (index_book.picUrl === 'default.jpg') {
+            if (index_book.id == "") {
+                this.$router.go(-1)
+            } else if (index_book.picUrl === 'default.jpg') {
                 this.picUrl = 'static/default.jpg'
                 this.urlToDb = 'default.jpg'
             } else {

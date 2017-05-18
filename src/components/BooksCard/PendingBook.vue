@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="header-add">
-                    <router-link :to="{ path: '/editbook', query:{ isEdit: false }}">
+                    <router-link :to="{ path: '/editbook', query:{ isEdit: 'false' }}">
                         <x-icon type="ios-plus" size="37"></x-icon>
                     </router-link>
                 </div>
@@ -25,7 +25,7 @@
                         <img src="../../assets/pic/pending_edit.png">
                     </router-link>
                 </div>
-                <img src="static/default.jpg">
+                <img :src="book.picUrl">
                 <div class="loom"></div>
             </div>
             <div class="green-box" :style="{ height: height*0.2 + 'px'}">
@@ -79,10 +79,10 @@
         <div v-else>
             <divider>没有数据</divider>
             <div class="but-item">
-                <x-button @click.native="add_item" type="primary" action-type="button">添加一个账本</x-button>
+                <x-button @click.native="addBook" type="primary" action-type="button">添加一个账本</x-button>
             </div>
         </div>
-        <button class="publiced-but">
+        <button class="publiced-but" :class="{ disabled: !hasBook }" @click="toPublic">
             <img src="../../assets/logo.png">
         </button>
     </div>
@@ -102,7 +102,7 @@ export default {
     data() {
         return {
             hasBook: false,
-            hasBookItem: true,
+            hasBookItem: false,
             height: '',
             contentH: '',
             book: {},
@@ -138,12 +138,20 @@ export default {
                 bookId: index_book.id
             }).then(res => {
                 if (res.status === 200 && res.body.error_code === 0) {
+                    index_book.reset();
                     this.$router.push({ path: "/publiced" })
+                } else if (res.body.error_code === 1018) {
+                    this.$vux.loading.hide()
+                    this.$vux.toast.show({
+                        text: '写入区块链超时，请检查网络',
+                        type: 'warn',
+                        tiem: 2000
+                    })
                 }
             })
         },
         addBook: function () {
-            this.$router.push({ path: '/editbook', query:{ isEdit: false } })
+            this.$router.push({ path: '/editbook', query: { isEdit: false } })
         },
         getAllBookItems: function () {
             resource.getAllBookItems({
@@ -160,7 +168,6 @@ export default {
                             }
                         })
                         this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
-                        console.log(res.body.data)
                         this.hasBookItem = true
                         this.$vux.loading.hide()
                     }
@@ -173,18 +180,30 @@ export default {
         getIndexBook: function () {
             resource.getIndexBook().then(res => {
                 if (res.status === 200 && res.body.error_code === 0) {
-                    if (res.body.data.bookItems.length !== 0) {
-                        this.hasBookItem = true;
+                    if (res.body.data !== null) {
+                        this.hasBook = true
+                        if (res.body.data.bookItems.length !== 0) {
+                            this.hasBookItem = true;
+                        }
+                        index_book.set(res.body.data.info, res.body.data.bookItems);
+                        this.book = index_book;
+                        this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
                     }
-                    index_book.set(res.body.data.info, res.body.data.bookItems);
-                    this.book = index_book;
-                    this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
                     this.$vux.loading.hide()
                 } else if (res.status === 200 && res.body.error_code === 1006) {
                     this.$vux.loading.hide()
                     this.$router.push({ path: 'login' })
                     this.$vux.toast.show({
                         text: '登录过期',
+                        type: 'warn',
+                        time: 2000
+                    })
+                } else {
+                    localStorage.token = ""
+                    this.$vux.loading.hide()
+                    this.$router.push({ path: 'login' })
+                    this.$vux.toast.show({
+                        text: '用户不存在',
                         type: 'warn',
                         time: 2000
                     })
@@ -203,15 +222,19 @@ export default {
             text: "加载中"
         })
         if (this.$route.query.id) {
+            console.log("有id")
             this.book = index_book
             this.getAllBookItems()
         } else if (index_book.id) {
+            console.log("内存有值")
             this.$vux.loading.hide()
+            this.hasBook = true
             this.book = index_book
             if (this.book.book_item.length != 0) {
                 this.hasBookItem = true;
             }
         } else {
+            console.log("重新请求")
             this.getIndexBook()
         }
     }
@@ -293,6 +316,7 @@ export default {
         display: flex;
         align-items: center;
         position: absolute;
+        z-index: 1;
         right: 1.2em;
         top: 1.2em;
         img {
@@ -304,6 +328,7 @@ export default {
         display: flex;
         align-items: center;
         position: absolute;
+        z-index: 1;
         left: 1em;
         top: 1em;
     }

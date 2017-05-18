@@ -60,7 +60,7 @@ export default {
       pageSize: 100
     }).then(res => {
       var _this = this;
-      if (res.status === 200 && res.body.error_code === 0 && res.body.data.length !==0 ) {
+      if (res.status === 200 && res.body.error_code === 0 && res.body.data.length !== 0) {
         res.body.data.forEach(book => {
           let bookIn = {}
           bookIn._id = book._id
@@ -73,12 +73,21 @@ export default {
           bookIn.sum = book.sum
           bookIn.spend = book.spend
           bookIn.balance = book.balance
-          bookIn.picUrl = book.picUrl
-          bookIn.img = Vue.http.options.root + '/Books/getBookPic?fileName=' + book.picUrl
+
+          if (book.picUrl === 'default.jpg') {
+            bookIn.picUrl = 'static/default.jpg'
+            bookIn.img = 'static/default.jpg'
+
+          } else {
+            bookIn.img = Vue.http.options.root + '/Books/getBookPic?fileName=' + book.picUrl
+            bookIn.picUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + book.picUrl
+          }
           _this.list.push(bookIn)
         })
         this.hasData = true;
-        this.$vux.loading.hide();
+        this.$vux.loading.hide()
+      } else {
+        this.$vux.loading.hide()
       }
     })
   }

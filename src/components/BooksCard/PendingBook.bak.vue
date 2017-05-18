@@ -36,15 +36,15 @@
         </router-link>
         <div v-if="hasBookItem">
           <li class="item-cell vux-1px-b" v-for="item in book.book_item">
-          <div class="item-left">
-            <div class="item-tag">{{ item.tag }}</div>
-            <div class="two-info">
-              <span class="item-time">{{ item.happen_at }}</span>
-              <span class="item-content">{{ item.content }}</span>
+            <div class="item-left">
+              <div class="item-tag">{{ item.tag }}</div>
+              <div class="two-info">
+                <span class="item-time">{{ item.happen_at }}</span>
+                <span class="item-content">{{ item.content }}</span>
+              </div>
             </div>
-          </div>
-          <div class="item-right">￥{{ item.charge }}</div>
-        </li>
+            <div class="item-right">￥{{ item.charge }}</div>
+          </li>
         </div>
         <div v-else>
           <divider>没有账目</divider>
@@ -117,18 +117,21 @@ export default {
     } else if (index_book.id) {
       this.$vux.loading.hide()
       this.book = index_book
-      if(this.book.book_item.length != 0) {
-          this.hasBookItem = true;
+      if (this.book.book_item.length != 0) {
+        this.hasBookItem = true;
       }
     } else {
       resource.getIndexBook().then(res => {
+          console.log(res)
         if (res.status === 200 && res.body.error_code === 0) {
-          if( res.body.data.bookItems.length !== 0) {
-            this.hasBookItem = true;
-          } 
-          index_book.set(res.body.data.info, res.body.data.bookItems);
-          this.book = index_book;
-          this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
+          if (res.body.data !== null) {
+            if (res.body.data.bookItems.length !== 0) {
+              this.hasBookItem = true;
+            }
+            index_book.set(res.body.data.info, res.body.data.bookItems);
+            this.book = index_book;
+            this.book.partyTime = moment(this.book.partyTime).format('YYYY-MM-DD')
+          }
           this.$vux.loading.hide()
         } else if (res.status === 200 && res.body.error_code === 1006) {
           this.$vux.loading.hide()
@@ -173,11 +176,13 @@ export default {
     align-items: center;
     position: absolute;
     right: 1em;
+    z-index: 1;
   }
   .header-edit {
     display: flex;
     align-items: center;
     position: absolute;
+    z-index: 1;
     left: 1em;
   }
 }
@@ -259,8 +264,8 @@ export default {
 }
 
 .disabled {
-pointer-events: none;
-cursor: default;
-opacity: 0.6;
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.6;
 }
 </style>

@@ -1,4 +1,5 @@
 import moment from 'moment'
+import Vue from 'vue'
 var index_book = {
   id: '',
   title: '',
@@ -22,9 +23,14 @@ index_book.formatTime = function (bookItems) {
 }
 
 index_book.set = function (info, bookItems) {
+  if (info.picUrl === 'default.jpg') {
+    this.picUrl = 'static/default.jpg'
+  } else {
+    this.picUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + info.picUrl
+  }
+
   this.id = info._id;
   this.title = info.title;
-  this.picUrl = info.picUrl;
   this.place = info.place;
   this.intro = info.intro;
   this.partyTime = info.partyTime;
@@ -80,8 +86,8 @@ index_book.newItem = function (newItem) {
 //   }
 //   return countSheet
 // }
-index_book.count = function( type, charge ){
-  if( type == 1 ){
+index_book.count = function (type, charge) {
+  if (type == 1) {
     this.sum += Number(charge)
     this.balance += Number(charge)
   } else {
@@ -96,7 +102,7 @@ index_book.setIndexItem = function (allItem) {
     this.book_item = []
   } else {
     for (let i = 0; i <= 3; i++) {
-    console.log(allItem[i])      
+      console.log(allItem[i])
       this.book_item.push(allItem[i])
     }
   }

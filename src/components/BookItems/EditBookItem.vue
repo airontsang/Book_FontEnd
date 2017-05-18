@@ -8,7 +8,7 @@
           <br>
           <span>人民币</span>
         </div>
-        <input type="number" v-model="charge" @on-focus="onFocus" :is-type="float">
+        <input type="number" v-model="charge" placeholder="0.0" @click="toNull">
       </div>
       <div class="tag-box vux-1px-b" v-show="!type">
         <label :class="{ selected :tag.selected }" v-for="(tag, index) in tags" @click="selectTag(index)">{{ tag.name }}</label>
@@ -27,6 +27,7 @@
 import Bheader from '../BHeader.vue'
 import {
   Group,
+  XInput,
   DatetimeRange
 } from 'vux'
 import moment from 'moment'
@@ -35,12 +36,6 @@ import {
   index_book
 } from '../../state.js'
 export default {
-  watch: {
-    $route(to, from) {
-      console.log(to);
-      console.log(from);
-    }
-  },
   data() {
     return {
       tags: [{
@@ -74,10 +69,11 @@ export default {
   },
   computed: {
     canSubmit: function () {
-      if (this.charge !== '' && !this.float.valid && this.charge == 0) {
+      if (this.charge !== '' && this.charge !== 0) {
         return true
+      } else {
+        return false
       }
-      return false
     }
   },
   methods: {
@@ -88,23 +84,27 @@ export default {
     count: function () {
 
     },
-    onFocus: function () {
-      this.charge = ''
-    },
-    float: function (value) {
-      return {
-        valid: value.toString().split(".")[1].length > 1,
-        msg: "精确到小数点后一位"
-      }
+    toNull: function () {
+      this.charge = ""
     },
     Fsubmit: function () {
-      this.$vux.loading.show({
-        text: "提交中"
-      })
-      if (this.$route.query.isEdit) {
-        this.submitEdit();
+      if (this.charge.toString().split(".").length > 1) {
+        if (this.charge.toString().split(".")[1].length > 1) {
+          this.$vux.toast.show({
+            text: "只能精确到角",
+            type: 'warn',
+            time: 1500
+          })
+        }
       } else {
-        this.submitAdd();
+        this.$vux.loading.show({
+          text: "提交中"
+        })
+        if (this.$route.query.isEdit) {
+          this.submitEdit();
+        } else {
+          this.submitAdd();
+        }
       }
     },
     submitEdit: function () {
@@ -155,6 +155,12 @@ export default {
           // this.$router.push({ path: '/allbookitems', query:{ addSuccess: true } });
           this.$router.back();
         } else {
+          this.$vux.loading.hide()
+          this.$vux.toast.show({
+            text: '网络错误',
+            type: 'warn',
+            time: 2000
+          })
           console.log(res)    //其他网络错误
         }
       })
@@ -199,6 +205,7 @@ export default {
   },
   components: {
     Group,
+    XInput,
     DatetimeRange,
     'b-header': Bheader,
   }
@@ -282,5 +289,9 @@ input {
 
 .time-box1 {
   color: #777;
+}
+
+.weui-cell:before {
+  border: none;
 }
 </style>

@@ -12,8 +12,8 @@
     </div>
     <div class="login-box">
       <div class="login-box">
-        <x-input title="手机" :value="LoginId" name="mobile" placeholder="请输入手机号码" keyboard="number" is-type="china-mobile"></x-input>
-        <x-input title="密码" :value="passWord" type="password"></x-input>
+        <x-input title="手机" v-model="LoginId" name="mobile" placeholder="请输入手机号码" keyboard="number" is-type="china-mobile"></x-input>
+        <x-input title="密码" v-model="passWord" type="password"></x-input>
       </div>
       <div style="padding:15px;">
         <x-button @click.native="login()" type="primary" action-type="button">登录</x-button>
@@ -33,6 +33,7 @@ import {
   Group
 } from 'vux'
 import resource from '@/resource.js'
+import { index_book } from '../../state.js'
 import Vue from 'vue'
 
 export default {
@@ -43,8 +44,8 @@ export default {
   },
   data() {
     return {
-      LoginId: '18665802614',
-      passWord: '123456'
+      LoginId: '',
+      passWord: ''
     }
   },
   methods: {
@@ -65,16 +66,32 @@ export default {
         console.log(err)
       })
     }
+  },
+  mounted: function () {
+    index_book.reset()
   }
 }
 
 </script>
 <style scoped lang="less">
+// html {
+//   height: 100%;
+// }
+// body {
+//   height: 100%;
+// }
+// #app {
+//   height: 100%;
+// }
 @import '~vux/src/styles/1px.less';
 .login-holder {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  // background-image: url("../../assets/login_bg.jpg");
+  // background-position: center center;
+  // background-size: auto 100%;
+  // background-repeat:no-repeat;
 }
 
 h3 {

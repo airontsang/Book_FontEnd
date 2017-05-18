@@ -52,35 +52,35 @@ export default {
     methods: {
         reg: function () {
             console.log("hello")
-            // this.$vux.loading.show({
-            //     text: "加载中"
-            // })
-            // resource.login({
-            //     loginId: this.LoginId,
-            //     passWord: this.passWord
-            // }).then(res => {
-            //     if (res.status === 200 && res.body.error_code === 0) {
-            //         // localStorage.token = res.body.token;
-            //         // this.$router.push({ path: '/' })
-            //         this.$vux.loading.show({
-            //             text: "跳转中"
-            //         })
-            //         this.login()
-            //     } else if (res.body.error_code === 1004) {
-            //         this.$vux.loading.hide()
-            //         this.$vux.toast.show({
-            //             text: '手机号已被注册',
-            //             type: 'warn',
-            //             time: 2000
-            //         })
-            //     }
-            // }, err => {
-            //     console.log(err)
-            // })
+            this.$vux.loading.show({
+                text: "加载中"
+            })
+            resource.reg({},{
+                loginId: this.loginId,
+                passWord: this.passWord
+            }).then(res => {
+                if (res.status === 200 && res.body.error_code === 0) {
+                    // localStorage.token = res.body.token;
+                    // this.$router.push({ path: '/' })
+                    this.$vux.loading.show({
+                        text: "跳转中"
+                    })
+                    this.login()
+                } else if (res.body.error_code === 1004) {
+                    this.$vux.loading.hide()
+                    this.$vux.toast.show({
+                        text: '手机号已被注册',
+                        type: 'warn',
+                        time: 2000
+                    })
+                }
+            }, err => {
+                console.log(err)
+            })
         },
         login: function () {
             resource.login({
-                loginId: this.LoginId,
+                loginId: this.loginId,
                 passWord: this.passWord
             }).then(res => {
                 if (res.status === 200 && res.body.error_code === 0) {

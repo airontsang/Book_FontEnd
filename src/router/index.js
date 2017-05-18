@@ -11,6 +11,7 @@ import PublicedDetail from '@/components/BooksCard/PublicedDetail'
 import EditBook from '@/components/BooksCard/EditBook'
 import Login from '@/components/User/Login.vue'
 import Reg from '@/components/User/Reg.vue'
+import Test from '@/components/Test.vue'
 
 import { index_book } from '../state'
 Vue.use(Router)
@@ -45,11 +46,11 @@ var router = new Router({
     }, {
       path: 'publiced',
       name: 'publiced',
-      component: PublicedBooks
+      component: PublicedBooks,     
     }, {
       path: 'unsure',
       name: 'unsure',
-      component: UnsureBooks
+      component: UnsureBooks,  
     }]
   }, {
     path: '/reg',
@@ -60,6 +61,10 @@ var router = new Router({
     name: 'login',
     component: Login
   }, {
+    path: '/test',
+    name: 'test',
+    component: Test
+  },{
     path: '/allbookitems',
     name: 'allbookitems',
     component: AllBookItems,
@@ -76,8 +81,7 @@ var router = new Router({
   }, {
     path: '/editbook',
     name: 'editbook',
-    component: EditBook,
-    meta: { requireBook: true }
+    component: EditBook
   }]
 })
 
