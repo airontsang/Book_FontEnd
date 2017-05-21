@@ -23,10 +23,10 @@ var router = new Router({
     redirect: { path: 'pending' },
     component: BooksHolder,
     beforeEnter: ((to, from, next) => {
-      if ( to.name === "none" ) {
+      if ( to.name == 'publiced' ) {
+        console.log(to.name)
         next();
-      }
-      if (localStorage.token) {
+      } else if (localStorage.token) {
         next();
       } else {
         console.log("没有token, 调到登录")

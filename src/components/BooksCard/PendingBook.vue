@@ -3,7 +3,7 @@
         <div v-if="hasBook">
             <div class="head-box" :style="{ height: height*0.4 + 'px'}">
                 <div class="text-box">
-                    <h2 :style="{ 'margin-top': (height)*0.21 + 'px'}">{{ book.title }}</h2>
+                    <h2 :style="{ 'margin-top': (height)*0.18 + 'px'}">{{ book.title }}</h2>
                     <div class="details-box">
                         <div class="time">
                             <img src="../../assets/pic/pending_time.png">
@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="header-add">
-                    <router-link :to="{ path: '/editbook', query:{ isEdit: 'false' }}">
+                    <router-link :to="{ path: '/editbook', query:{ isEdit: false }}">
                         <x-icon type="ios-plus" size="37"></x-icon>
                     </router-link>
                 </div>
@@ -225,6 +225,7 @@ export default {
             console.log("有id")
             this.book = index_book
             this.getAllBookItems()
+            this.hasBook = true
         } else if (index_book.id) {
             console.log("内存有值")
             this.$vux.loading.hide()
@@ -241,7 +242,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 @import '~vux/src/styles/1px.less';
 .vux-x-icon {
     fill: #09BB07; //   fill: #fff;
@@ -287,7 +288,7 @@ export default {
         color: #F8F8FF;
         display: inline-flex;
         width: 100%;
-        margin-top: 15px;
+        margin-top: 12px;
         img {
             height: 15px;
             width: 15px;
@@ -307,7 +308,7 @@ export default {
         height: 100%;
         width: 100%;
         position: absolute;
-        z-index: -4;
+        z-index: 1;
         top: 0;
         background: #000;
         opacity: .4;
@@ -316,7 +317,7 @@ export default {
         display: flex;
         align-items: center;
         position: absolute;
-        z-index: 1;
+        z-index: 999;
         right: 1.2em;
         top: 1.2em;
         img {
@@ -328,7 +329,7 @@ export default {
         display: flex;
         align-items: center;
         position: absolute;
-        z-index: 1;
+        z-index: 999;
         left: 1em;
         top: 1em;
     }

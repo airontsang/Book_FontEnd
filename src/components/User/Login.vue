@@ -3,7 +3,7 @@
     <div class="bg-img">
       <img src="../../assets/login_bg.jpg">
     </div>
-      <div class="bg-loom"></div>    
+    <div class="bg-loom"></div>
     <div class="solgn-box">
       <div class="logo">
         <img src="../../assets/logo.png">
@@ -61,8 +61,21 @@ export default {
           localStorage.token = res.body.token;
           this.$router.push({ path: '/' })
           this.$vux.loading.hide()
+        } else {
+          this.$vux.loading.hide()
+          this.$vux.toast.show({
+            text: '用户不存在',
+            type: 'warn',
+            time: 2000
+          })
         }
       }, err => {
+        this.$vux.loading.hide()
+        this.$vux.toast.show({
+          text: '网络开小差',
+          type: 'warn',
+          time: 2000
+        })
         console.log(err)
       })
     }
@@ -87,8 +100,7 @@ export default {
 .login-holder {
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  // background-image: url("../../assets/login_bg.jpg");
+  overflow: hidden; // background-image: url("../../assets/login_bg.jpg");
   // background-position: center center;
   // background-size: auto 100%;
   // background-repeat:no-repeat;
@@ -107,30 +119,32 @@ h3 {
 .bg-img {
   position: absolute;
   z-index: -2;
-      width: 100%;
-      height: 100%;
+  width: 100%;
+  height: 100%;
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 }
+
 .bg-loom {
-    position: absolute;
-    background: #000;
-    z-index: -1;
-    opacity: .5;
-    width: 100%;
-    height: 100%;
-  }
+  position: absolute;
+  background: #000;
+  z-index: -1;
+  opacity: .5;
+  width: 100%;
+  height: 100%;
+}
 
 .login-box {
   margin-top: 60px;
 }
 
 .login-box {
-  color: rgba(255, 255, 255, .6);  
+  color: rgba(255, 255, 255, .6);
 }
+
 .weui-cellss {
   background: transparent !important;
   color: rgba(255, 255, 255, .6);
@@ -152,13 +166,12 @@ h3 {
   text-align: center;
   p {
     display: inline;
-    color:rgba(255, 255, 255, .9)
-    // text-decoration: underline; 
+    color: rgba(255, 255, 255, .9) // text-decoration: underline; 
   }
 }
 
-.logo img{
-    width: 80px;
-    height: 80px;
+.logo img {
+  width: 80px;
+  height: 80px;
 }
 </style>

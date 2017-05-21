@@ -5,6 +5,7 @@ var index_book = {
   title: '',
   intro: '',
   picUrl: '',
+  picName: '',
   place: '',
   isPublic: false,
   partyTime: '',
@@ -29,6 +30,7 @@ index_book.set = function (info, bookItems) {
     this.picUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + info.picUrl
   }
 
+  this.picName = info.picUrl
   this.id = info._id;
   this.title = info.title;
   this.place = info.place;
@@ -46,6 +48,7 @@ index_book.set = function (info, bookItems) {
 index_book.reset = function () {
   this.id = '';
   this.title = '';
+  this.picName = '';  
   this.picUrl = '';
   this.place = '';
   this.intro = '';

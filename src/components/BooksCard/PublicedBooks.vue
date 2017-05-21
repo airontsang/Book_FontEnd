@@ -145,14 +145,16 @@ export default {
         if (res.status === 200 && res.body.error_code === 0) {
           itemData.title = res.body.data.bookTitle
           itemData.bookId = res.body.data._id
-          itemData.showUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + item.picUrl
-          itemData.qrValue = Vue.http.options.root + '/#/publiced/id?' + res.body.data._id;
+          itemData.showUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + res.body.data.picUrl
+          // itemData.qrValue = Vue.http.options.root + '/#/publiced/id?' + res.body.data._id;
+            itemData.qrValue = 'http://192.168.43.214:8080/#/publiced?id=' + res.body.data._id;                      
           itemData.evidenceId = res.body.data.evidenceId
           itemData.dbHash = res.body.data.dbHash
           itemData.bcHash = res.body.data.bcHash
         }
         listData.push(itemData)
         this.oneBook = itemData
+        this.hasData = true
       })
     } else {
       resource.getPublicedBooks().then(res => {
@@ -166,7 +168,8 @@ export default {
             } else {
               itemData.showUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + item.picUrl
             }
-            itemData.qrValue = Vue.http.options.root + '/#/publiced?id=' + item._id;
+            // itemData.qrValue = Vue.http.options.root + '/#/publiced?id=' + item._id;
+            itemData.qrValue = 'http://192.168.43.214:8080/#/publiced?id=' + item._id;            
             itemData.evidenceId = item.evidenceId
             itemData.dbHash = item.dbHash
             itemData.bcHash = item.bcHash

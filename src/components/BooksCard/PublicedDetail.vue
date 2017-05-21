@@ -1,6 +1,6 @@
 <template>
     <div>
-        <x-header :right-options="{showMore: true}" @on-click-more="showMenus = true">{{ book.bookTitle }}</x-header>
+        <x-header :right-options="{showMore: false }" @on-click-more="showMenus = true">{{ book.bookTitle }}</x-header>
         <form-preview :header-label="formTitle" :header-value="titleValue" :body-items="list"></form-preview>
         <div class="item-box">
             <ul>
@@ -41,37 +41,37 @@ export default {
             titleValue: '',
             list: [{
                 label: '创建时间',
-                value: '电动打蛋机'
+                value: '-----'
             }, {
                 label: '公示时间',
-                value: '电动打蛋机'
+                value: '------'
             }, {
                 label: '地点',
-                value: '名字名字名字'
+                value: '-------'
             }, {
                 label: '简介',
-                value: '很长很长的名字很长很长的名字很长很长的名字很长很长的名字很长很长的名字'
+                value: '------'
             }, {
                 label: '聚会时间',
-                value: '电动打蛋机'
+                value: '-----'
             }, {
                 label: '总收款',
-                value: '电动打蛋机'
+                value: '-----'
             }, {
                 label: '总花费',
-                value: '电动打蛋机'
+                value: '-----'
             }, {
                 label: '余额',
-                value: '电动打蛋机'
+                value: '-----'
             }, {
                 label: '凭证ID',
-                value: '电动打蛋机'
+                value: '-----'
             }, {
                 label: '区块标识',
-                value: '电动打蛋机'
+                value: '-----'
             }, {
                 label: '全数据HASH',
-                value: '电动打蛋机'
+                value: '-----'
             }],
             book: {},
             bookItems: [],
@@ -88,6 +88,44 @@ export default {
             }).then(res => {
                 if (res.status === 200 && res.body.error_code === 0) {
                     this.book = res.body.data
+                    for (var key in this.book) {
+                        switch (key) {
+                            case 'create_at':
+                                this.list[0].value = moment(this.book[key]).format("YYYY-MM-DD HH:mm")
+                                break;
+                            case 'update_at':
+                                this.list[1].value = moment(this.book[key]).format("YYYY-MM-DD HH:mm")
+                                break;
+                            case 'place':
+                                this.list[2].value = this.book[key]
+                                break;
+                            case 'intro':
+                                this.list[3].value = this.book[key]
+                                break;
+                            case 'partyTime':
+                                this.list[4].value = moment(this.book[key]).format("YYYY-MM-DD HH:mm")
+                                break;
+                            case 'sum':
+                                this.list[5].value = this.book[key]
+                                break;
+                            case 'spend':
+                                this.list[6].value = this.book[key]
+                                break;
+                            case 'balance':
+                                this.list[7].value = this.book[key]
+                                break;
+                            case 'evidenceId':
+                                this.list[8].value = this.book[key]
+                                break;
+                            case 'bcHash':
+                                this.list[9].value = this.book[key]
+                                break;
+                            case 'dbHash':
+                                this.list[10].value = this.book[key]
+                                break;
+                        }
+                        this.titleValue = this.book.title
+                    }
                 }
                 this.tick1 = true;
             })
@@ -103,47 +141,48 @@ export default {
                         item.happen_at = moment(item.happen_at).format("MM-DD HH:mm")
                     })
                     this.bookItems = res.body.data;
+                    alert(this.bookItems.length)
+                    this.$vux.loading.hide()
                 }
                 this.tick2 = true;
-                for (var key in this.book) {
-                    switch (key) {
-                        case 'create_at':
-                            this.list[0].value = moment(this.book[key]).format("YYYY-MM-DD HH:mm")
-                            break;
-                        case 'update_at':
-                            this.list[1].value = moment(this.book[key]).format("YYYY-MM-DD HH:mm")
-                            break;
-                        case 'place':
-                            this.list[2].value = this.book[key]
-                            break;
-                        case 'intro':
-                            this.list[3].value = this.book[key]
-                            break;
-                        case 'partyTime':
-                            this.list[4].value = moment(this.book[key]).format("YYYY-MM-DD HH:mm")
-                            break;
-                        case 'sum':
-                            this.list[5].value = this.book[key]
-                            break;
-                        case 'spend':
-                            this.list[6].value = this.book[key]
-                            break;
-                        case 'balance':
-                            this.list[7].value = this.book[key]
-                            break;
-                        case 'evidenceId':
-                            this.list[8].value = this.book[key]
-                            break;
-                        case 'bcHash':
-                            this.list[9].value = this.book[key]
-                            break;
-                        case 'dbHash':
-                            this.list[10].value = this.book[key]
-                            break;
-                    }
-                    this.titleValue = this.book.title
-                }
-                this.$vux.loading.hide()
+                // for (var key in this.book) {
+                //     switch (key) {
+                //         case 'create_at':
+                //             this.list[0].value = moment(this.book[key]).format("YYYY-MM-DD HH:mm")
+                //             break;
+                //         case 'update_at':
+                //             this.list[1].value = moment(this.book[key]).format("YYYY-MM-DD HH:mm")
+                //             break;
+                //         case 'place':
+                //             this.list[2].value = this.book[key]
+                //             break;
+                //         case 'intro':
+                //             this.list[3].value = this.book[key]
+                //             break;
+                //         case 'partyTime':
+                //             this.list[4].value = moment(this.book[key]).format("YYYY-MM-DD HH:mm")
+                //             break;
+                //         case 'sum':
+                //             this.list[5].value = this.book[key]
+                //             break;
+                //         case 'spend':
+                //             this.list[6].value = this.book[key]
+                //             break;
+                //         case 'balance':
+                //             this.list[7].value = this.book[key]
+                //             break;
+                //         case 'evidenceId':
+                //             this.list[8].value = this.book[key]
+                //             break;
+                //         case 'bcHash':
+                //             this.list[9].value = this.book[key]
+                //             break;
+                //         case 'dbHash':
+                //             this.list[10].value = this.book[key]
+                //             break;
+                //     }
+                //     this.titleValue = this.book.title
+                // }
             })
         },
         cancelPublic: function () {
@@ -161,7 +200,7 @@ export default {
                         time: 2000
                     })
                     index_book.reset()
-                    this.$router.push({ path:'/pending' })
+                    this.$router.push({ path: '/pending' })
                 }
             })
         }
@@ -172,7 +211,9 @@ export default {
             text: "加载中"
         })
         this.getBookInfo()
+        window.setTimeout(
         this.getBookItems()
+        , 200)
     },
     components: {
         XHeader,

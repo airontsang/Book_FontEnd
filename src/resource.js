@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 
-const API_BASE = 'http://localhost:3000'
+// const API_BASE = 'http://localhost:3000'
+const API_BASE = 'http://192.168.43.214:3000'
 // const API_BASE = 'http://192.168.191.1:3000'
 
 Vue.use(VueResource);
@@ -42,16 +43,6 @@ Vue.http.interceptors.push((request, next) => {
 })
 
 const actions = {
-  //   updatepsw: {
-  //     method: 'PUT',
-  //     url: 'User/UpdatePass?LoginId={LoginId}&key={key}&oldPassword={oldPassword}&newPassword={newPassword}'
-  //   },
-  //   alarmdata: {  //获取全部警报
-  //     method: 'GET',
-  //     url: 'Alarm/GetAllAlarm',
-  //     _timeout: 10000
-  //   },
-  //loginId passWord
   login: {
     method: 'GET',
     url: 'User/Login?'

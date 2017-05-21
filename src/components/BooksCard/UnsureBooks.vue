@@ -35,6 +35,11 @@ export default {
       list: [],
     }
   },
+  watch: {
+    $route(to, from) {
+      console.log(from)
+    }
+  },
   methods: {
     goPending: function (index) {
       index_book.reset()
@@ -52,6 +57,15 @@ export default {
     }
   },
   mounted: function () {
+    // if (this.$route.from.name == "publiced" && this.$route.query.id) {
+    //   this.$vux.loading.hide()
+    //   this.$router.push({ path: 'login' })
+    //   this.$vux.toast.show({
+    //     text: '请登录',
+    //     type: 'warn',
+    //     time: 2000
+    //   })
+    // }
     this.$vux.loading.show({
       text: "加载中"
     })

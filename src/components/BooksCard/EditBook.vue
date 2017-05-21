@@ -132,7 +132,7 @@ export default {
                 //TODO 调用接口 发送formdata
             }
             let url = Vue.http.options.root + 'Books/bookPic/uploading'
-            this.$http.post('http://localhost:3000/Books/bookPic/uploading', formdata, {
+            this.$http.post('http://192.168.43.214:3000/Books/bookPic/uploading', formdata, {
                 headers: {
                     'Content-type': "mutipart/form-data"
                 }
@@ -143,7 +143,7 @@ export default {
                         type: 'success',
                         time: 2000
                     })
-                    this.$vux.loading.hide();
+                    this.$vux.loading.hide()
                     this.lastFile = ""
                     this.urlToDb = res.body.name
                     this.picIsOk = false;
@@ -160,7 +160,6 @@ export default {
             if (input.addEventListener) {
                 var _this = this;
                 input.addEventListener("change", function (evt) {
-                    console.log("改变了啊")
                     var i = 0,
                         len = this.files.length,
                         img, reader, file;
@@ -249,13 +248,16 @@ export default {
         if (this.$route.query.isEdit) {
             if (index_book.id == "") {
                 this.$router.go(-1)
-            } else if (index_book.picUrl === 'default.jpg') {
-                this.picUrl = 'static/default.jpg'
-                this.urlToDb = 'default.jpg'
-            } else {
-                this.urlToDb = index_book.picUrl
-                this.picUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + index_book.picUrl
-            }
+            } 
+            // else if (index_book.picUrl === 'default.jpg') {
+            //     this.picUrl = 'static/default.jpg'
+            //     this.urlToDb = 'default.jpg'
+            // } else {
+            //     this.urlToDb = index_book.picUrl
+            //     this.picUrl = Vue.http.options.root + '/Books/getBookPic?fileName=' + index_book.picUrl
+            // }
+            this.picUrl = index_book.picUrl
+            this.urlToDb = index_book.picName
             this.title = "账本修改"
             this.bookTitle = index_book.title
             this.place = index_book.place
